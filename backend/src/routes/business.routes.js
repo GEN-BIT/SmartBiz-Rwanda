@@ -3,6 +3,8 @@ const express = require("express");
 const businessController = require("../controllers/business.controller");
 
 const inventoryRoutes = require("./inventory.routes");
+const salesRoutes = require("./sales.routes");
+const customerRoutes = require("./customer.routes");
 
 const authenticate = require("../middleware/authenticate");
 const tenantCheck = require("../middleware/tenant-check");
@@ -20,5 +22,7 @@ router.get(
 );
 
 router.use(inventoryRoutes);
+router.use(salesRoutes);
+router.use(customerRoutes);
 
 module.exports = router;

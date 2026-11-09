@@ -1,0 +1,370 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Customers | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/customers.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+    <div class="app-layout">
+
+        <div id="sidebarMount"></div>
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="app-main">
+
+<header class="topbar">
+
+    <div class="topbar-left">
+
+        <button
+            type="button"
+            class="menu-toggle"
+            id="menuToggle"
+            aria-label="Open navigation menu"
+            aria-expanded="false"
+        >
+            &#9776;
+        </button>
+
+        <div>
+            <span class="topbar-label">BUSINESS WORKSPACE</span>
+            <h1>Customers</h1>
+        </div>
+
+    </div>
+
+    <div class="topbar-right">
+
+        <div class="user-information">
+
+            <span class="user-avatar" id="userAvatar">S</span>
+
+            <div class="user-details">
+                <strong id="userName">Loading...</strong>
+                <span id="userRole">Business User</span>
+            </div>
+
+        </div>
+
+    </div>
+
+</header>
+
+            <section class="customers-page">
+
+                <div class="customers-page-heading">
+                    <div>
+                        <h2>Customer Management</h2>
+                        <p>
+                            View customer information, manage accounts,
+                            and keep track of outstanding balances.
+                        </p>
+                    </div>
+
+                    <button
+                        type="button"
+                        class="btn btn-primary"
+                        id="openCustomerModal"
+                    >
+                        + Add Customer
+                    </button>
+                </div>
+
+                <div
+                    id="customersMessage"
+                    class="customer-alert hidden"
+                    role="alert"
+                ></div>
+
+                <!-- Customer summary -->
+                <div class="customer-summary-grid">
+
+                    <article class="customer-summary-card">
+                        <div class="customer-summary-label">
+                            Total Customers
+                        </div>
+                        <div class="customer-summary-value" id="totalCustomers">
+                            0
+                        </div>
+                    </article>
+
+                    <article class="customer-summary-card">
+                        <div class="customer-summary-label">
+                            Active on This Page
+                        </div>
+                        <div class="customer-summary-value" id="activeCustomers">
+                            0
+                        </div>
+                    </article>
+
+                    <article class="customer-summary-card">
+                        <div class="customer-summary-label">
+                            With Debt on This Page
+                        </div>
+                        <div class="customer-summary-value" id="customersWithDebt">
+                            0
+                        </div>
+                    </article>
+
+                    <article class="customer-summary-card">
+                        <div class="customer-summary-label">
+                            Outstanding on This Page
+                        </div>
+                        <div class="customer-summary-value" id="totalOutstanding">
+                            RWF 0
+                        </div>
+                    </article>
+
+                </div>
+
+                <!-- Customer list -->
+                <section class="customer-panel">
+
+                    <div class="customer-panel-heading">
+                        <div>
+                            <h3>Customers</h3>
+                            <p>Search and manage your customer records.</p>
+                        </div>
+                    </div>
+
+                    <div class="customer-toolbar">
+
+                        <div class="customer-search">
+                            <input
+                                type="search"
+                                id="customerSearch"
+                                placeholder="Search by name, phone or email..."
+                                aria-label="Search customers"
+                            >
+
+                            <button
+                                type="button"
+                                class="btn btn-primary"
+                                id="customerSearchButton"
+                            >
+                                Search
+                            </button>
+                        </div>
+
+                        <div class="customer-filter">
+                            <label for="customerStatusFilter">
+                                Status
+                            </label>
+
+                            <select id="customerStatusFilter">
+                                <option value="">All Customers</option>
+                                <option value="active">Active</option>
+                                <option value="inactive">Inactive</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div class="customer-table-wrapper">
+                        <table class="customer-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Customer</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Credit Limit</th>
+                                    <th>Outstanding</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="customersTableBody">
+                                <tr>
+                                    <td colspan="7" class="customer-empty">
+                                        Loading customers...
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="customer-pagination">
+
+                        <span id="customerPaginationInfo">
+                            Showing 0 customers
+                        </span>
+
+                        <div class="customer-pagination-actions">
+                            <button
+                                type="button"
+                                id="customerPreviousPage"
+                                class="btn btn-secondary"
+                                disabled
+                            >
+                                Previous
+                            </button>
+
+                            <button
+                                type="button"
+                                id="customerNextPage"
+                                class="btn btn-secondary"
+                                disabled
+                            >
+                                Next
+                            </button>
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Add / Edit Customer Modal -->
+    <div
+        class="customer-modal-overlay hidden"
+        id="customerModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="customerModalTitle"
+    >
+
+        <div class="customer-modal">
+
+            <div class="customer-modal-header">
+                <div>
+                    <h3 id="customerModalTitle">Add Customer</h3>
+                    <p>Enter the customer's information below.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="customer-modal-close"
+                    id="closeCustomerModal"
+                    aria-label="Close modal"
+                >
+                    &times;
+                </button>
+            </div>
+
+            <form id="customerForm">
+
+                <div class="customer-form-grid">
+
+                    <div class="form-group">
+                        <label for="customerName">
+                            Customer Name <span>*</span>
+                        </label>
+
+                        <input
+                            type="text"
+                            id="customerName"
+                            name="customer_name"
+                            maxlength="150"
+                            placeholder="Enter customer name"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerPhone">Phone Number</label>
+
+                        <input
+                            type="tel"
+                            id="customerPhone"
+                            name="phone"
+                            maxlength="20"
+                            placeholder="Enter phone number"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerEmail">Email Address</label>
+
+                        <input
+                            type="email"
+                            id="customerEmail"
+                            name="email"
+                            maxlength="150"
+                            placeholder="Enter email address"
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="customerCreditLimit">
+                            Credit Limit (RWF)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="customerCreditLimit"
+                            name="credit_limit"
+                            min="0"
+                            step="0.01"
+                            value="0"
+                        >
+                    </div>
+
+                    <div class="form-group customer-form-full">
+                        <label for="customerAddress">Address</label>
+
+                        <textarea
+                            id="customerAddress"
+                            name="address"
+                            maxlength="255"
+                            rows="3"
+                            placeholder="Enter customer address"
+                        ></textarea>
+                    </div>
+
+                </div>
+
+                <div class="customer-modal-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="cancelCustomerModal"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="saveCustomerButton"
+                    >
+                        Save Customer
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/services/customer.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/customers.js"></script>
+
+</body>
+</html>

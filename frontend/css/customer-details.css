@@ -1,0 +1,461 @@
+﻿/* =========================================================
+   SMARTBIZ RWANDA - CUSTOMER DETAILS
+   ========================================================= */
+
+.customer-details-page {
+    width: 100%;
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 26px 30px 40px;
+    color: var(--text-primary, #1f2937);
+}
+
+.customer-details-heading,
+.details-panel-heading,
+.customer-profile-main,
+.customer-profile-meta,
+.history-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+}
+
+.customer-details-heading {
+    margin-bottom: 24px;
+}
+
+.customer-details-heading h2 {
+    margin: 12px 0 5px;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.customer-details-heading p,
+.details-panel-heading p {
+    margin: 0;
+    color: #7b8794;
+    font-size: 13px;
+}
+
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #16834b;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.back-link:hover {
+    color: #0e6337;
+}
+
+.customer-details-page .btn {
+    min-height: 42px;
+    padding: 10px 17px;
+    border: 0;
+    border-radius: 8px;
+    background: #16834b;
+    color: #fff;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.customer-details-page .btn:hover:not(:disabled) {
+    background: #116b3c;
+}
+
+.customer-details-page .btn:disabled {
+    opacity: .55;
+    cursor: not-allowed;
+}
+
+.customer-profile-card,
+.detail-stat-card,
+.details-panel {
+    background: #fff;
+    border: 1px solid #e8eee9;
+    border-radius: 13px;
+    box-shadow: 0 3px 14px rgba(20, 50, 30, .035);
+}
+
+.customer-profile-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 25px;
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.customer-profile-main {
+    justify-content: flex-start;
+}
+
+.customer-profile-avatar {
+    width: 66px;
+    height: 66px;
+    flex: 0 0 66px;
+    display: grid;
+    place-items: center;
+    border-radius: 18px;
+    background: #e8f5ed;
+    color: #16834b;
+    font-size: 25px;
+    font-weight: 700;
+}
+
+.customer-profile-identity h3 {
+    margin: 0 0 6px;
+    font-size: 20px;
+}
+
+.customer-profile-identity p {
+    margin: 0 0 10px;
+    color: #778477;
+    font-size: 13px;
+}
+
+.customer-profile-meta {
+    justify-content: flex-end;
+    gap: 35px;
+}
+
+.customer-profile-meta div {
+    display: grid;
+    gap: 6px;
+}
+
+.customer-profile-meta span,
+.information-item span,
+.payment-overview-list span {
+    color: #7b8794;
+    font-size: 12px;
+}
+
+.customer-profile-meta strong {
+    font-size: 13px;
+}
+
+.status-badge,
+.payment-status,
+.sale-status {
+    display: inline-flex;
+    align-items: center;
+    width: fit-content;
+    padding: 5px 10px;
+    border-radius: 20px;
+    background: #e8f5ed;
+    color: #16834b;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: capitalize;
+}
+
+.status-badge.inactive,
+.sale-status.cancelled,
+.payment-status.unpaid {
+    background: #fff0ed;
+    color: #c24132;
+}
+
+.payment-status.partial,
+.sale-status.returned {
+    background: #fff5df;
+    color: #a66a08;
+}
+
+.payment-status.refunded {
+    background: #f0eaff;
+    color: #6941a5;
+}
+
+.customer-detail-summary {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.detail-stat-card {
+    min-width: 0;
+    padding: 19px;
+}
+
+.detail-stat-card span {
+    display: block;
+    color: #778477;
+    font-size: 12px;
+    font-weight: 500;
+}
+
+.detail-stat-card strong {
+    display: block;
+    margin: 10px 0 6px;
+    color: #1f2937;
+    font-size: 23px;
+    overflow-wrap: anywhere;
+}
+
+.detail-stat-card small {
+    color: #929c94;
+    font-size: 11px;
+}
+
+.customer-details-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+    margin-bottom: 20px;
+}
+
+.details-panel {
+    min-width: 0;
+    padding: 21px;
+    margin-bottom: 20px;
+}
+
+.customer-details-grid .details-panel {
+    margin-bottom: 0;
+}
+
+.details-panel-heading {
+    padding-bottom: 17px;
+    border-bottom: 1px solid #edf1ed;
+}
+
+.details-panel-heading h3 {
+    margin: 0 0 5px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.customer-information-list,
+.payment-overview-list {
+    display: grid;
+}
+
+.information-item,
+.payment-overview-list > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    padding: 15px 0;
+    border-bottom: 1px solid #f0f2f0;
+}
+
+.information-item:last-child,
+.payment-overview-list > div:last-child {
+    border-bottom: 0;
+}
+
+.information-item strong,
+.payment-overview-list strong {
+    max-width: 65%;
+    color: #344238;
+    font-size: 13px;
+    text-align: right;
+    overflow-wrap: anywhere;
+}
+
+.history-panel {
+    margin-bottom: 20px;
+}
+
+.history-count {
+    flex: 0 0 auto;
+    padding: 6px 10px;
+    border-radius: 20px;
+    background: #eff7f1;
+    color: #16834b;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.customer-details-page .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.customer-details-page .data-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.customer-details-page .data-table th {
+    padding: 14px 13px;
+    background: #f8faf8;
+    color: #778477;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.customer-details-page .data-table td {
+    padding: 14px 13px;
+    border-bottom: 1px solid #edf1ed;
+    color: #344238;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+.customer-details-page .data-table tbody tr:hover {
+    background: #fbfdfb;
+}
+
+.customer-details-page .table-empty {
+    padding: 28px;
+    color: #89938c;
+    text-align: center;
+}
+
+.invoice-link {
+    color: #16834b;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.invoice-link:hover {
+    text-decoration: underline;
+}
+
+.details-loading {
+    padding: 55px 20px;
+    color: #778477;
+    text-align: center;
+}
+
+.page-message {
+    margin-bottom: 18px;
+    padding: 13px 15px;
+    border: 1px solid #f1d2cc;
+    border-radius: 8px;
+    background: #fff5f3;
+    color: #a33a2d;
+    font-size: 13px;
+}
+
+.page-message.success {
+    border-color: #cce8d4;
+    background: #effaf2;
+    color: #176b39;
+}
+
+@media (max-width: 1100px) {
+    .customer-detail-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .customer-profile-card {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .customer-profile-meta {
+        justify-content: flex-start;
+        padding-left: 84px;
+    }
+}
+
+@media (max-width: 767px) {
+    .customer-details-page {
+        padding: 20px 15px 30px;
+    }
+
+    .customer-details-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .customer-details-heading h2 {
+        font-size: 21px;
+    }
+
+    .customer-details-heading .btn {
+        width: 100%;
+    }
+
+    .customer-profile-card {
+        padding: 18px;
+    }
+
+    .customer-profile-avatar {
+        width: 55px;
+        height: 55px;
+        flex-basis: 55px;
+        border-radius: 15px;
+        font-size: 21px;
+    }
+
+    .customer-profile-identity h3 {
+        font-size: 17px;
+    }
+
+    .customer-profile-meta {
+        width: 100%;
+        padding-left: 0;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    .customer-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .details-panel {
+        padding: 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .customer-detail-summary {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .detail-stat-card {
+        padding: 14px;
+    }
+
+    .detail-stat-card strong {
+        font-size: 18px;
+    }
+
+    .customer-profile-meta {
+        flex-direction: column;
+    }
+
+    .history-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .information-item,
+    .payment-overview-list > div {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .information-item strong,
+    .payment-overview-list strong {
+        max-width: 100%;
+        text-align: left;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .customer-details-page *,
+    .customer-details-page *::before,
+    .customer-details-page *::after {
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+        animation-duration: .01ms !important;
+    }
+}

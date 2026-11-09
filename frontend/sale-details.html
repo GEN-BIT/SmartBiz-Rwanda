@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sale Details | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/sales.css">
+</head>
+<body>
+    <div id="sidebarMount"></div>
+
+    <main class="main-content sales-main">
+        <header class="sales-header details-header">
+            <div>
+                <p class="sales-eyebrow">SALES MANAGEMENT</p>
+                <h1>Sale Details</h1>
+                <p class="sales-subtitle">
+                    Review the invoice, items and payment records.
+                </p>
+            </div>
+
+            <div class="details-actions">
+                <a href="sales.html" class="sales-secondary-link">
+                    Back to sales
+                </a>
+
+                <button type="button" id="printSaleBtn" class="sales-primary-link">
+                    Print invoice
+                </button>
+            </div>
+        </header>
+
+        <div id="saleDetailsMessage" class="sales-message" role="alert" hidden></div>
+
+        <div id="saleDetailsContent">
+            <div class="sales-panel sales-loading">
+                Loading sale details...
+            </div>
+        </div>
+    </main>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/services/sales.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/sale-details.js"></script>
+</body>
+</html>

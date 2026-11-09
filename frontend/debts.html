@@ -1,0 +1,217 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Debts | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/customers.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/debts.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+        <div id="sidebarMount"></div>
+
+        <main class="app-main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle" type="button"
+                        aria-label="Toggle navigation">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+
+                    <div>
+                        <h1 class="topbar-title">Customer Debts</h1>
+                        <p class="topbar-subtitle">Track outstanding customer payments</p>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="topbar-user">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div class="user-info">
+                            <span id="topbarUserName">User</span>
+                            <small id="topbarUserRole">Business member</small>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="debts-page">
+                <div class="debts-heading">
+                    <div>
+                        <h2>Outstanding Debts</h2>
+                        <p>Monitor unpaid and partially paid customer invoices.</p>
+                    </div>
+                </div>
+
+                <div id="debtsMessage" class="debts-message" hidden></div>
+
+                <div class="debts-summary">
+                    <article class="debt-stat-card">
+                        <span>Outstanding Invoices</span>
+                        <strong id="debtInvoiceCount">0</strong>
+                        <small>Invoices with an unpaid balance</small>
+                    </article>
+
+                    <article class="debt-stat-card">
+                        <span>Outstanding on This Page</span>
+                        <strong id="debtPageBalance">RWF 0</strong>
+                        <small>Balance of displayed invoices</small>
+                    </article>
+
+                    <article class="debt-stat-card">
+                        <span>Customers on This Page</span>
+                        <strong id="debtCustomerCount">0</strong>
+                        <small>Distinct customers displayed</small>
+                    </article>
+                </div>
+
+                <section class="debts-panel">
+                    <div class="debts-toolbar">
+                        <div>
+                            <h3>Outstanding Invoices</h3>
+                            <p>Search by customer, phone number or invoice number.</p>
+                        </div>
+
+                        <div class="debts-search">
+                            <input type="search" id="debtSearch"
+                                placeholder="Search debts..." autocomplete="off">
+                            <button type="button" id="debtSearchButton"
+                                class="debts-search-button">Search</button>
+                        </div>
+                    </div>
+
+                    <div class="debts-table-wrap">
+                        <table class="debts-table">
+                            <thead>
+                                <tr>
+                                    <th>Invoice</th>
+                                    <th>Customer</th>
+                                    <th>Phone</th>
+                                    <th>Date</th>
+                                    <th>Total Amount</th>
+                                    <th>Amount Paid</th>
+                                    <th>Balance Due</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="debtsTableBody">
+                                <tr>
+                                    <td colspan="9" class="debts-empty">
+                                        Loading outstanding invoices...
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="debts-pagination">
+                        <span id="debtsPaginationInfo">Showing 0 records</span>
+
+                        <div class="debts-pagination-actions">
+                            <button type="button" id="debtsPrevious" disabled>
+                                Previous
+                            </button>
+                            <span id="debtsCurrentPage">Page 1</span>
+                            <button type="button" id="debtsNext" disabled>
+                                Next
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <div class="debt-modal-overlay" id="debtPaymentModal" hidden>
+        <section class="debt-modal" role="dialog" aria-modal="true"
+            aria-labelledby="debtModalTitle">
+
+            <div class="debt-modal-heading">
+                <div>
+                    <h3 id="debtModalTitle">Record Debt Payment</h3>
+                    <p>Record a payment against this outstanding invoice.</p>
+                </div>
+
+                <button type="button" class="debt-modal-close"
+                    id="closeDebtModal" aria-label="Close">&times;</button>
+            </div>
+
+            <div id="debtModalMessage" class="debt-modal-message" hidden></div>
+
+            <div class="debt-invoice-summary">
+                <div>
+                    <span>Invoice</span>
+                    <strong id="debtModalInvoice">—</strong>
+                </div>
+                <div>
+                    <span>Customer</span>
+                    <strong id="debtModalCustomer">—</strong>
+                </div>
+                <div>
+                    <span>Outstanding Balance</span>
+                    <strong id="debtModalBalance">RWF 0</strong>
+                </div>
+            </div>
+
+            <form id="debtPaymentForm">
+                <div class="debt-form-group">
+                    <label for="debtPaymentAmount">Payment Amount (RWF)</label>
+                    <input type="number" id="debtPaymentAmount"
+                        name="amount" min="0.01" step="0.01"
+                        required placeholder="Enter amount">
+                    <small id="debtAmountHint">Enter the amount received.</small>
+                </div>
+
+                <div class="debt-form-group">
+                    <label for="debtPaymentMethod">Payment Method</label>
+                    <select id="debtPaymentMethod" name="payment_method" required>
+                        <option value="cash">Cash</option>
+                        <option value="mobile_money">Mobile Money</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="card">Card</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="debt-form-group">
+                    <label for="debtPaymentReference">Transaction Reference</label>
+                    <input type="text" id="debtPaymentReference"
+                        name="transaction_reference" maxlength="100"
+                        placeholder="Optional reference">
+                </div>
+
+                <div class="debt-form-group">
+                    <label for="debtPaymentNotes">Notes</label>
+                    <textarea id="debtPaymentNotes" name="notes"
+                        rows="3" placeholder="Optional payment notes"></textarea>
+                </div>
+
+                <div class="debt-modal-actions">
+                    <button type="button" id="cancelDebtPayment"
+                        class="debt-cancel-button">Cancel</button>
+                    <button type="submit" id="saveDebtPayment"
+                        class="debt-submit-button">Record Payment</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/services/customer.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/debts.js"></script>
+</body>
+</html>

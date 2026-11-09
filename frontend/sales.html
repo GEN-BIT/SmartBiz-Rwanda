@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Sales History | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/sales.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+    <div class="app-layout">
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+        <div id="sidebarMount"></div>
+
+        <main class="app-main">
+
+            <header class="topbar">
+
+                <div class="topbar-left">
+                    <button
+                        type="button"
+                        class="menu-toggle"
+                        id="menuToggle"
+                        aria-label="Open navigation menu"
+                        aria-expanded="false"
+                    >
+                        &#9776;
+                    </button>
+
+                    <div>
+                        <span class="topbar-label">BUSINESS WORKSPACE</span>
+                        <h1>Sales History</h1>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="user-information">
+                        <span class="user-avatar" id="userAvatar">S</span>
+
+                        <div class="user-details">
+                            <strong id="userName">Loading...</strong>
+                            <span id="userRole">Business User</span>
+                        </div>
+                    </div>
+                </div>
+
+            </header>
+
+            <section class="sales-page">
+
+                <div class="sales-header">
+                    <div>
+                        <p class="sales-eyebrow">SALES MANAGEMENT</p>
+                        <h2>Sales Overview</h2>
+                        <p class="sales-subtitle">
+                            View transactions, monitor payments and track
+                            outstanding customer balances.
+                        </p>
+                    </div>
+
+                    <a href="pos.html" class="sales-primary-link">
+                        + New Sale
+                    </a>
+                </div>
+
+                <div
+                    id="salesMessage"
+                    class="sales-message"
+                    role="alert"
+                    hidden
+                ></div>
+
+                <section class="sales-summary-grid">
+
+                    <article class="sales-summary-card">
+                        <span>Total Records</span>
+                        <strong id="salesRecordCount">0</strong>
+                        <small>Matching sales</small>
+                    </article>
+
+                    <article class="sales-summary-card">
+                        <span>Current Page Revenue</span>
+                        <strong id="salesPageRevenue">RWF 0</strong>
+                        <small>Completed sales on this page</small>
+                    </article>
+
+                    <article class="sales-summary-card">
+                        <span>Outstanding Balance</span>
+                        <strong id="salesPageBalance">RWF 0</strong>
+                        <small>Balances on this page</small>
+                    </article>
+
+                </section>
+
+                <section class="sales-panel">
+
+                    <div class="sales-panel-heading">
+                        <div>
+                            <h3>Sales Transactions</h3>
+                            <p>
+                                Search invoices and filter transactions
+                                by payment or sale status.
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="sales-filters">
+
+                        <input
+                            type="search"
+                            id="salesSearch"
+                            placeholder="Search invoice or customer..."
+                            aria-label="Search invoice or customer"
+                        >
+
+                        <select
+                            id="paymentStatusFilter"
+                            aria-label="Filter payment status"
+                        >
+                            <option value="">All Payment Statuses</option>
+                            <option value="paid">Paid</option>
+                            <option value="partial">Partially Paid</option>
+                            <option value="unpaid">Unpaid</option>
+                            <option value="refunded">Refunded</option>
+                        </select>
+
+                        <select
+                            id="saleStatusFilter"
+                            aria-label="Filter sale status"
+                        >
+                            <option value="">All Sale Statuses</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                            <option value="returned">Returned</option>
+                        </select>
+
+                        <button
+                            type="button"
+                            id="salesFilterBtn"
+                        >
+                            Apply Filters
+                        </button>
+
+                    </div>
+
+                    <div class="sales-table-wrapper">
+
+                        <table class="sales-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Invoice</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Total</th>
+                                    <th>Paid</th>
+                                    <th>Balance</th>
+                                    <th>Payment</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="salesTableBody">
+                                <tr>
+                                    <td colspan="9" class="sales-empty">
+                                        Loading sales...
+                                    </td>
+                                </tr>
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                    <div class="sales-pagination">
+
+                        <span id="salesPaginationInfo">
+                            Showing sales...
+                        </span>
+
+                        <div class="sales-pagination-actions">
+
+                            <button
+                                type="button"
+                                id="previousPageBtn"
+                                disabled
+                            >
+                                Previous
+                            </button>
+
+                            <button
+                                type="button"
+                                id="nextPageBtn"
+                                disabled
+                            >
+                                Next
+                            </button>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/services/sales.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/sales.js"></script>
+
+</body>
+</html>

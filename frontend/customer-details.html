@@ -1,0 +1,257 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Details | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/customers.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/customer-details.css">
+</head>
+<body>
+
+    <div class="app-layout">
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+        <div id="sidebarMount"></div>
+
+        <main class="app-main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="menu-toggle" id="menuToggle" type="button"
+                        aria-label="Toggle navigation">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
+
+                    <div>
+                        <h1 class="topbar-title">Customer Details</h1>
+                        <p class="topbar-subtitle">Customer profile and transaction history</p>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="topbar-user">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <div class="user-info">
+                            <span id="topbarUserName">User</span>
+                            <small id="topbarUserRole">Business member</small>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <section class="customer-details-page">
+
+                <div class="customer-details-heading">
+                    <div>
+                        <a href="customers.html" class="back-link">
+                            <span aria-hidden="true">&larr;</span> Back to Customers
+                        </a>
+                        <h2 id="customerPageTitle">Customer Profile</h2>
+                        <p>View customer information, sales and payments.</p>
+                    </div>
+
+                    <button type="button" class="btn btn-primary"
+                        id="editCustomerButton" disabled>
+                        Edit Customer
+                    </button>
+                </div>
+
+                <div id="customerDetailsMessage" class="page-message" hidden></div>
+
+                <div id="customerDetailsLoading" class="details-loading">
+                    Loading customer information...
+                </div>
+
+                <div id="customerDetailsContent" hidden>
+
+                    <div class="customer-profile-card">
+                        <div class="customer-profile-main">
+                            <div class="customer-profile-avatar" id="customerAvatar">C</div>
+
+                            <div class="customer-profile-identity">
+                                <h3 id="customerName">Customer Name</h3>
+                                <p id="customerContact">Contact information</p>
+                                <span class="status-badge" id="customerStatus">Active</span>
+                            </div>
+                        </div>
+
+                        <div class="customer-profile-meta">
+                            <div>
+                                <span>Customer ID</span>
+                                <strong id="customerId">—</strong>
+                            </div>
+                            <div>
+                                <span>Customer since</span>
+                                <strong id="customerSince">—</strong>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="customer-detail-summary">
+                        <article class="detail-stat-card">
+                            <span>Total Purchases</span>
+                            <strong id="customerTotalPurchases">0</strong>
+                            <small>Completed sales</small>
+                        </article>
+
+                        <article class="detail-stat-card">
+                            <span>Total Spent</span>
+                            <strong id="customerTotalSpent">RWF 0</strong>
+                            <small>Completed purchases</small>
+                        </article>
+
+                        <article class="detail-stat-card">
+                            <span>Outstanding Balance</span>
+                            <strong id="customerOutstanding">RWF 0</strong>
+                            <small>Unpaid customer balance</small>
+                        </article>
+
+                        <article class="detail-stat-card">
+                            <span>Credit Limit</span>
+                            <strong id="customerCreditLimit">RWF 0</strong>
+                            <small>Approved customer limit</small>
+                        </article>
+                    </div>
+
+                    <div class="customer-details-grid">
+
+                        <section class="details-panel customer-information-panel">
+                            <div class="details-panel-heading">
+                                <div>
+                                    <h3>Contact Information</h3>
+                                    <p>Customer profile information</p>
+                                </div>
+                            </div>
+
+                            <div class="customer-information-list">
+                                <div class="information-item">
+                                    <span>Phone number</span>
+                                    <strong id="customerPhone">Not provided</strong>
+                                </div>
+
+                                <div class="information-item">
+                                    <span>Email address</span>
+                                    <strong id="customerEmail">Not provided</strong>
+                                </div>
+
+                                <div class="information-item">
+                                    <span>Address</span>
+                                    <strong id="customerAddress">Not provided</strong>
+                                </div>
+
+                                <div class="information-item">
+                                    <span>Account status</span>
+                                    <strong id="customerAccountStatus">Active</strong>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="details-panel customer-payment-panel">
+                            <div class="details-panel-heading">
+                                <div>
+                                    <h3>Payment Overview</h3>
+                                    <p>Summary of customer payments</p>
+                                </div>
+                            </div>
+
+                            <div class="payment-overview-list">
+                                <div>
+                                    <span>Number of payments</span>
+                                    <strong id="customerPaymentCount">0</strong>
+                                </div>
+                                <div>
+                                    <span>Total payments received</span>
+                                    <strong id="customerPaymentsTotal">RWF 0</strong>
+                                </div>
+                                <div>
+                                    <span>Open balances</span>
+                                    <strong id="customerOpenBalances">0</strong>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <section class="details-panel history-panel">
+                        <div class="details-panel-heading history-heading">
+                            <div>
+                                <h3>Sales History</h3>
+                                <p>Sales and outstanding balances for this customer</p>
+                            </div>
+                            <span class="history-count" id="salesHistoryCount">0 records</span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Invoice</th>
+                                        <th>Date</th>
+                                        <th>Total</th>
+                                        <th>Paid</th>
+                                        <th>Balance</th>
+                                        <th>Payment Status</th>
+                                        <th>Sale Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customerSalesTable">
+                                    <tr>
+                                        <td colspan="7" class="table-empty">
+                                            No sales found.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                    <section class="details-panel history-panel">
+                        <div class="details-panel-heading history-heading">
+                            <div>
+                                <h3>Payment History</h3>
+                                <p>Payments received from this customer</p>
+                            </div>
+                            <span class="history-count" id="paymentHistoryCount">0 records</span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Invoice ID</th>
+                                        <th>Amount</th>
+                                        <th>Method</th>
+                                        <th>Type</th>
+                                        <th>Reference</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="customerPaymentsTable">
+                                    <tr>
+                                        <td colspan="6" class="table-empty">
+                                            No payments found.
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </section>
+
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/services/customer.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/customer-details.js"></script>
+</body>
+</html>
