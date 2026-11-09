@@ -1,0 +1,81 @@
+/* ==================================
+   SMARTBIZ LOGIN PAGE
+   ================================== */
+
+.login-card {
+    max-width: 480px;
+}
+
+/* Forgot password link */
+
+.password-label-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+}
+
+.password-label-row a {
+    color: var(--accent-color);
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.password-label-row a:hover {
+    text-decoration: underline;
+}
+
+/* Remember me */
+
+.remember-row {
+    display: flex;
+    justify-content: flex-start;
+    margin: 5px 0 24px;
+}
+
+.remember-label {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: var(--text-secondary);
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.remember-label input {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--accent-color);
+}
+
+/* Login security message */
+
+.login-security {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    margin-top: 28px;
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+/* Login button */
+
+#loginButton {
+    margin-top: 5px;
+}
+
+/* Small phones */
+
+@media (max-width: 375px) {
+
+    .password-label-row a {
+        font-size: 11px;
+    }
+
+    .login-security {
+        font-size: 11px;
+    }
+
+}

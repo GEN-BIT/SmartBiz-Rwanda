@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="theme-color" content="#123B2A">
+
+    <title>Dashboard | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body class="dashboard-body">
+
+    <div class="app-layout">
+
+        <!-- Sidebar is created by JavaScript -->
+        <div id="sidebarMount"></div>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="app-main">
+
+            <!-- Top navigation -->
+            <header class="topbar">
+
+                <div class="topbar-left">
+
+                    <button
+                        class="menu-toggle"
+                        id="menuToggle"
+                        aria-label="Open navigation menu"
+                        aria-expanded="false"
+                    >
+                        ☰
+                    </button>
+
+                    <div>
+                        <span class="topbar-label">BUSINESS WORKSPACE</span>
+                        <h1>Dashboard</h1>
+                    </div>
+
+                </div>
+
+                <div class="topbar-right">
+
+                    <div class="user-information">
+                        <span class="user-avatar" id="userAvatar">S</span>
+
+                        <div class="user-details">
+                            <strong id="userName">Loading...</strong>
+                            <span id="userRole">Business Owner</span>
+                        </div>
+                    </div>
+
+                </div>
+
+            </header>
+
+
+            <!-- Main dashboard content -->
+            <main class="dashboard-content">
+
+                <section class="welcome-section">
+
+                    <div>
+                        <p class="section-eyebrow">BUSINESS OVERVIEW</p>
+
+                        <h2 id="welcomeHeading">
+                            Welcome to SmartBiz
+                        </h2>
+
+                        <p id="welcomeDescription">
+                            Here's an overview of your business workspace.
+                        </p>
+                    </div>
+
+                    <div class="date-display" id="currentDate"></div>
+
+                </section>
+
+
+                <!-- KPI cards -->
+                <section class="kpi-grid" aria-label="Business performance">
+
+                    <article class="kpi-card">
+
+                        <div class="kpi-top">
+                            <span class="kpi-icon">↗</span>
+                            <span class="kpi-label">Sales</span>
+                        </div>
+
+                        <h3 id="totalSales">—</h3>
+                        <p id="salesDescription">Loading sales data...</p>
+
+                    </article>
+
+
+                    <article class="kpi-card">
+
+                        <div class="kpi-top">
+                            <span class="kpi-icon">RWF</span>
+                            <span class="kpi-label">Revenue</span>
+                        </div>
+
+                        <h3 id="totalRevenue">—</h3>
+                        <p id="revenueDescription">Loading revenue data...</p>
+
+                    </article>
+
+
+                    <article class="kpi-card">
+
+                        <div class="kpi-top">
+                            <span class="kpi-icon">+</span>
+                            <span class="kpi-label">Expenses</span>
+                        </div>
+
+                        <h3 id="totalExpenses">—</h3>
+                        <p id="expensesDescription">Loading expenses data...</p>
+
+                    </article>
+
+
+                    <article class="kpi-card">
+
+                        <div class="kpi-top">
+                            <span class="kpi-icon">%</span>
+                            <span class="kpi-label">Profit</span>
+                        </div>
+
+                        <h3 id="totalProfit">—</h3>
+                        <p id="profitDescription">Net operating result this month</p>
+
+                    </article>
+
+                </section>
+
+
+                <!-- Analytics section -->
+                <section class="dashboard-grid">
+
+                    <article class="dashboard-panel sales-panel">
+
+                        <div class="panel-heading">
+
+                            <div>
+                                <h3>Sales overview</h3>
+                                <p>Monitor your business sales performance.</p>
+                            </div>
+
+                            <span class="panel-tag">Analytics</span>
+
+                        </div>
+
+                        <div class="chart-empty-state" id="salesChart">
+    <p>Loading sales overview...</p>
+</div>
+
+                    </article>
+
+
+                    <article class="dashboard-panel inventory-panel">
+
+                        <div class="panel-heading">
+
+                            <div>
+                                <h3>Inventory status</h3>
+                                <p>Keep track of your business stock.</p>
+                            </div>
+
+                        </div>
+
+                        <div class="chart-empty-state" id="inventorySummary">
+    <p>Loading inventory information...</p>
+</div>
+
+                    </article>
+
+                </section>
+
+
+                <!-- Recent transactions -->
+                <section class="dashboard-panel transactions-panel">
+
+                    <div class="panel-heading">
+
+                        <div>
+                            <h3>Recent transactions</h3>
+                            <p>Review your latest business transactions.</p>
+                        </div>
+
+                        <a href="sales.html" class="text-link">
+                            View sales
+                        </a>
+
+                    </div>
+
+                    <div class="table-wrapper">
+
+                        <table class="dashboard-table">
+
+                            <thead>
+                                <tr>
+                                    <th>Reference</th>
+                                    <th>Customer</th>
+                                    <th>Date</th>
+                                    <th>Amount</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="recentTransactions">
+    <tr>
+        <td colspan="5" class="table-empty">
+            Loading recent transactions...
+        </td>
+    </tr>
+</tbody>
+
+                        </table>
+
+                    </div>
+
+                </section>
+
+
+                <!-- Account information -->
+                <section class="account-status-panel">
+
+                    <div>
+                        <span class="status-indicator"></span>
+
+                        <div>
+                            <strong>Business account active</strong>
+                            <p>Your business workspace is accessible.</p>
+                        </div>
+                    </div>
+
+                    <span class="active-label">Active</span>
+
+                </section>
+
+            </main>
+
+
+            <!-- Mobile bottom navigation -->
+            <nav class="mobile-bottom-nav" aria-label="Mobile navigation">
+
+                <a href="dashboard.html" class="bottom-nav-link active">
+                    <span>⌂</span>
+                    <small>Home</small>
+                </a>
+
+                <a href="sales.html" class="bottom-nav-link">
+                    <span>↗</span>
+                    <small>Sales</small>
+                </a>
+
+                <a href="inventory.html" class="bottom-nav-link">
+                    <span>▤</span>
+                    <small>Stock</small>
+                </a>
+
+                <button class="bottom-nav-link" id="mobileMoreButton">
+                    <span>☰</span>
+                    <small>More</small>
+                </button>
+
+            </nav>
+
+        </div>
+
+    </div>
+
+
+    <!-- Authentication and dashboard scripts -->
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/services/dashboard.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/dashboard.js"></script>
+
+</body>
+</html>

@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+backend/node_modules/
+
+# Environment variables and secrets
+.env
+.env.*
+backend/.env
+backend/.env.*
+!backend/.env.example
+
+# Logs
+*.log
+
+# Build files
+dist/
+build/

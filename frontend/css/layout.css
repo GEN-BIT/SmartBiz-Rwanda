@@ -1,0 +1,202 @@
+.dashboard-body {
+    overflow-x: hidden;
+}
+
+.app-layout {
+    min-height: 100vh;
+}
+
+.sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 100;
+    width: 260px;
+    height: 100vh;
+    overflow-y: auto;
+    background: var(--primary-color);
+    color: #ffffff;
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition);
+}
+
+.sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 25px 20px;
+}
+
+.brand-logo {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: var(--accent-color);
+    display: grid;
+    place-items: center;
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.brand-name {
+    font-size: 19px;
+    font-weight: 700;
+}
+
+.brand-name span {
+    color: #86efac;
+}
+
+.sidebar-business {
+    padding: 5px 20px 22px;
+    color: #cbd5e1;
+    font-size: 12px;
+    overflow-wrap: anywhere;
+}
+
+.sidebar-section-label {
+    padding: 14px 20px 8px;
+    color: #9ca3af;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1.2px;
+}
+
+.sidebar-nav {
+    display: grid;
+    gap: 5px;
+    padding: 0 12px;
+}
+
+.sidebar-link {
+    min-height: 45px;
+    padding: 11px 13px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 8px;
+    color: #d1d5db;
+    font-size: 14px;
+    transition: var(--transition);
+}
+
+.sidebar-link:hover,
+.sidebar-link.active {
+    color: #ffffff;
+    background: var(--primary-light);
+}
+
+.sidebar-link.active {
+    border-left: 3px solid #4ade80;
+}
+
+.sidebar-link-icon {
+    width: 23px;
+    text-align: center;
+    font-size: 17px;
+}
+
+.sidebar-footer {
+    margin-top: auto;
+    padding: 16px 12px;
+    border-top: 1px solid rgba(255,255,255,.12);
+}
+
+.logout-button {
+    width: 100%;
+    min-height: 44px;
+    border: 0;
+    border-radius: 8px;
+    color: #ffffff;
+    background: rgba(255,255,255,.08);
+    text-align: left;
+    padding: 10px 14px;
+}
+
+.logout-button:hover {
+    background: rgba(255,255,255,.16);
+}
+
+.app-main {
+    min-height: 100vh;
+    margin-left: 260px;
+}
+
+.topbar {
+    min-height: 82px;
+    padding: 15px clamp(18px, 3vw, 38px);
+    background: #ffffff;
+    border-bottom: 1px solid var(--border-color);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+}
+
+.topbar-left,
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.topbar-label {
+    color: var(--text-secondary);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.topbar h1 {
+    font-size: 21px;
+    line-height: 1.3;
+}
+
+.menu-toggle {
+    display: none;
+    width: 44px;
+    height: 44px;
+    border: 1px solid var(--border-color);
+    border-radius: 9px;
+    background: #ffffff;
+    font-size: 21px;
+}
+
+.user-information {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.user-avatar {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background: #dcfce7;
+    color: var(--primary-color);
+    display: grid;
+    place-items: center;
+    font-weight: 800;
+}
+
+.user-details {
+    display: grid;
+    line-height: 1.4;
+}
+
+.user-details strong {
+    font-size: 13px;
+}
+
+.user-details span {
+    font-size: 11px;
+    color: var(--text-secondary);
+}
+
+.sidebar-overlay {
+    display: none;
+}
+
+.mobile-bottom-nav {
+    display: none;
+}
