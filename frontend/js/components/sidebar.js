@@ -5,7 +5,7 @@
  */
 
 window.renderSidebar = function (membership) {
-    const mount = document.getElementById("sidebarMount");
+    const mount = document.getElementById("sidebarMount") || document.getElementById("sidebar");
 
     if (!mount || !membership) return;
 
@@ -19,7 +19,7 @@ window.renderSidebar = function (membership) {
             ["↗", "Sales", "sales.html"],
             ["▣", "Products", "products.html"],
             ["▦", "Categories", "categories.html"],
-            ["▤", "Inventory", "inventory.html"],
+            ["▦", "Inventory", "inventory.html"],
             ["♙", "Customers", "customers.html"],
             ["♧", "Suppliers", "suppliers.html"],
             ["▧", "Purchases", "purchases.html"],
@@ -33,7 +33,7 @@ window.renderSidebar = function (membership) {
             ["⌂", "Dashboard", "dashboard.html"],
             ["↗", "Sales", "sales.html"],
             ["▣", "Products", "products.html"],
-            ["▤", "Inventory", "inventory.html"],
+            ["▦", "Inventory", "inventory.html"],
             ["♙", "Customers", "customers.html"],
             ["♧", "Suppliers", "suppliers.html"],
             ["▧", "Purchases", "purchases.html"],
@@ -53,13 +53,43 @@ window.renderSidebar = function (membership) {
             ["⌂", "Dashboard", "dashboard.html"],
             ["▣", "Products", "products.html"],
             ["▦", "Categories", "categories.html"],
-            ["▤", "Inventory", "inventory.html"],
+            ["▦", "Inventory", "inventory.html"],
             ["♧", "Suppliers", "suppliers.html"],
             ["▧", "Purchases", "purchases.html"]
         ]
     };
 
     const menuItems = menuItemsByRole[role] || menuItemsByRole.owner;
+
+// Mobile navigation items for each business role.
+    const mobileItemsByRole = {
+        owner: [
+            ["⌂", "Home", "dashboard.html"],
+            ["↗", "Sales", "sales.html"],
+            ["▤", "Stock", "inventory.html"]
+        ],
+
+        manager: [
+            ["⌂", "Home", "dashboard.html"],
+            ["↗", "Sales", "sales.html"],
+            ["▤", "Stock", "inventory.html"]
+        ],
+
+        cashier: [
+            ["⌂", "Home", "dashboard.html"],
+            ["▣", "POS", "pos.html"],
+            ["↗", "Sales", "sales.html"]
+        ],
+
+        stock_manager: [
+            ["⌂", "Home", "dashboard.html"],
+            ["▣", "Products", "products.html"],
+            ["▤", "Stock", "inventory.html"]
+        ]
+    };
+
+    const mobileItems =
+        mobileItemsByRole[role] || mobileItemsByRole.owner;
 
     const escapeHTML = function (value) {
         return String(value).replace(/[&<>"']/g, function (character) {
@@ -118,6 +148,28 @@ window.renderSidebar = function (membership) {
             </div>
         </aside>
     `;
+
+// Render mobile navigation according to the user's role.
+    const mobileNav = document.querySelector(".mobile-bottom-nav");
+
+    if (mobileNav) {
+        mobileNav.innerHTML = `
+            ${mobileItems.map(item => `
+                <a href="${item[2]}"
+                   class="bottom-nav-link ${item[2] === currentPage ? "active" : ""}"
+                   ${item[2] === currentPage ? 'aria-current="page"' : ""}>
+                    <span>${item[0]}</span>
+                    <small>${item[1]}</small>
+                </a>
+            `).join("")}
+
+            <button class="bottom-nav-link" id="mobileMoreButton"
+                    aria-label="Open more navigation options">
+                <span>☰</span>
+                <small>More</small>
+            </button>
+        `;
+    }
 
     const sidebar = document.getElementById("mainSidebar");
     const overlay = document.getElementById("sidebarOverlay");

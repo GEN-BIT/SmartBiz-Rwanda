@@ -134,86 +134,62 @@ function setText(id, value) {
 
 
 /*
- * Show dashboard sections according to the user's role.
- *
- * This only controls presentation.
- * Backend authorization remains responsible for data security.
+ * Configure dashboard visibility according to business role.
  */
 function configureDashboardForRole(role) {
-    const cardVisibility = {
-        owner: {
-            totalSales: true,
-            totalRevenue: true,
-            totalExpenses: true,
-            totalProfit: true
-        },
-        manager: {
-            totalSales: true,
-            totalRevenue: true,
-            totalExpenses: true,
-            totalProfit: true
-        },
-        cashier: {
-            totalSales: true,
-            totalRevenue: true,
-            totalExpenses: false,
-            totalProfit: false
-        },
-        stock_manager: {
-            totalSales: false,
-            totalRevenue: false,
-            totalExpenses: false,
-            totalProfit: false
-        }
-    };
 
-    const visibility = cardVisibility[role] || cardVisibility.owner;
+    const kpiCards = document.querySelectorAll(".kpi-card");
+    const salesPanel = document.querySelector(".sales-panel");
+    const inventoryPanel = document.querySelector(".inventory-panel");
+    const transactionsPanel = document.querySelector(".transactions-panel");
 
-    Object.entries(visibility).forEach(function ([id, visible]) {
-        const element = document.getElementById(id);
+    // Start by showing all dashboard sections.
+    kpiCards.forEach(card => card.style.display = "");
+    if (salesPanel) salesPanel.style.display = "";
+    if (inventoryPanel) inventoryPanel.style.display = "";
+    if (transactionsPanel) transactionsPanel.style.display = "";
 
-        if (element) {
-            const card = element.closest(".kpi-card");
+    const salesLabel = document.querySelector("#totalSales")
+        ?.parentElement.querySelector(".kpi-label");
 
-            if (card) {
-                card.hidden = !visible;
-            }
-        }
-    });
+    const revenueLabel = document.querySelector("#totalRevenue")
+        ?.parentElement.querySelector(".kpi-label");
 
-    // Cashiers do not need the inventory summary on their dashboard.
-    if (role === "cashier") {
-        setPanelVisibility("inventorySummary", false);
-    }
+    if (role === "manager") {
 
-    // Stock managers focus on inventory rather than sales reporting.
-    if (role === "stock_manager") {
-        setPanelVisibility("salesChart", false);
-        setPanelVisibility("recentTransactions", false);
+        // Managers see sales performance and inventory.
+        kpiCards[2].style.display = "none";
+        kpiCards[3].style.display = "none";
+
+    } else if (role === "cashier") {
+
+        // Cashiers focus on sales activity.
+        kpiCards[1].style.display = "none";
+        kpiCards[2].style.display = "none";
+        kpiCards[3].style.display = "none";
+
+        if (inventoryPanel) inventoryPanel.style.display = "none";
+
+    } else if (role === "stock_manager") {
+
+        // Stock managers focus on products and stock levels.
+        kpiCards[2].style.display = "none";
+        kpiCards[3].style.display = "none";
+
+        if (salesPanel) salesPanel.style.display = "none";
+        if (transactionsPanel) transactionsPanel.style.display = "none";
+
+        if (salesLabel) salesLabel.textContent = "Active Products";
+        if (revenueLabel) revenueLabel.textContent = "Low Stock Products";
     }
 }
 
 
 /*
- * Show or hide the panel containing a particular element.
- */
-function setPanelVisibility(elementId, visible) {
-    const element = document.getElementById(elementId);
-
-    if (!element) return;
-
-    const panel = element.closest(".dashboard-panel");
-
-    if (panel) {
-        panel.hidden = !visible;
-    }
-}
-
-
-/*
- * Load dashboard information from the backend.
+ * Load dashboard information.
  */
 async function loadDashboardData(businessId, token, role) {
+
     const result = await dashboardService.getDashboard(
         businessId,
         token
@@ -225,13 +201,15 @@ async function loadDashboardData(businessId, token, role) {
 
     const dashboard = result.data;
 
-    renderDashboardSummary(dashboard.summary || {});
+    renderDashboardSummary(
+        dashboard.summary,
+        dashboard.inventory,
+        role
+    );
 
-    renderSalesOverview(dashboard.sales_overview || []);
-
-    renderInventorySummary(dashboard.inventory || {});
-
-    renderRecentTransactions(dashboard.recent_transactions || []);
+    renderSalesOverview(dashboard.sales_overview);
+    renderInventorySummary(dashboard.inventory);
+    renderRecentTransactions(dashboard.recent_transactions);
 }
 
 
@@ -248,22 +226,57 @@ function formatCurrency(amount) {
 
 
 /*
- * Render the dashboard summary cards.
+ * Render role-specific dashboard summary cards.
  */
-function renderDashboardSummary(summary) {
-    setText(
-        "totalSales",
-        Number(summary.total_sales || 0).toLocaleString("en-RW")
-    );
+function renderDashboardSummary(summary, inventory, role) {
 
-    setText("totalRevenue", formatCurrency(summary.revenue));
-    setText("totalExpenses", formatCurrency(summary.expenses));
-    setText("totalProfit", formatCurrency(summary.net_operating_result));
+    const totalSales = document.getElementById("totalSales");
+    const totalRevenue = document.getElementById("totalRevenue");
 
-    setText("salesDescription", "Completed sales this month");
-    setText("revenueDescription", "Revenue this month");
-    setText("expensesDescription", "Expenses this month");
-    setText("profitDescription", "Net operating result this month");
+    const totalExpenses = document.getElementById("totalExpenses");
+    const totalProfit = document.getElementById("totalProfit");
+
+    if (role === "stock_manager") {
+
+        totalSales.textContent =
+            Number(inventory.total_products || 0).toLocaleString("en-RW");
+
+        totalRevenue.textContent =
+            Number(inventory.low_stock || 0).toLocaleString("en-RW");
+
+        document.getElementById("salesDescription").textContent =
+            "Products currently active";
+
+        document.getElementById("revenueDescription").textContent =
+            "Products requiring stock attention";
+
+        return;
+    }
+
+    totalSales.textContent =
+        Number(summary.total_sales || 0).toLocaleString("en-RW");
+
+    totalRevenue.textContent = formatCurrency(summary.revenue);
+
+    document.getElementById("salesDescription").textContent =
+        "Completed sales this month";
+
+    document.getElementById("revenueDescription").textContent =
+        "Revenue this month";
+
+    if (role === "owner") {
+
+        totalExpenses.textContent = formatCurrency(summary.expenses);
+
+        totalProfit.textContent =
+            formatCurrency(summary.net_operating_result);
+
+        document.getElementById("expensesDescription").textContent =
+            "Expenses this month";
+
+        document.getElementById("profitDescription").textContent =
+            "Net operating result this month";
+    }
 }
 
 

@@ -1,0 +1,461 @@
+/* SmartBiz Rwanda Inventory Page */
+
+.inventory-page {
+    padding: 24px;
+}
+
+.inventory-page-heading,
+.inventory-panel-heading,
+.inventory-modal-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.inventory-page-heading {
+    margin-bottom: 24px;
+}
+
+.inventory-page-heading h2,
+.inventory-panel-heading h3,
+.inventory-modal-heading h2 {
+    color: var(--text-primary, #172B24);
+    margin-bottom: 5px;
+}
+
+.inventory-page-heading p,
+.inventory-panel-heading p,
+.inventory-modal-heading p {
+    color: var(--text-secondary, #64748B);
+    font-size: 14px;
+}
+
+.inventory-primary-button,
+.inventory-secondary-button {
+    border: none;
+    border-radius: 8px;
+    padding: 11px 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.inventory-primary-button {
+    background: var(--primary-color, #123B2A);
+    color: #fff;
+}
+
+.inventory-primary-button:hover {
+    background: #1B573D;
+}
+
+.inventory-secondary-button {
+    background: #F1F5F9;
+    color: #334155;
+}
+
+.inventory-secondary-button:hover {
+    background: #E2E8F0;
+}
+
+.inventory-summary-grid {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 26px;
+}
+
+.inventory-summary-card {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 22px;
+    background: #fff;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.03);
+}
+
+.summary-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: #E8F5ED;
+    color: #166534;
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.inventory-summary-card p {
+    color: #64748B;
+    font-size: 13px;
+    margin-bottom: 7px;
+}
+
+.inventory-summary-card h3 {
+    color: #172B24;
+    font-size: 25px;
+}
+
+.warning-card .summary-icon {
+    background: #FFF7E6;
+    color: #B45309;
+}
+
+.danger-card .summary-icon {
+    background: #FEECEC;
+    color: #B91C1C;
+}
+
+.inventory-tabs {
+    display: flex;
+    gap: 24px;
+    border-bottom: 1px solid #E2E8F0;
+    margin-bottom: 20px;
+}
+
+.inventory-tab {
+    background: none;
+    border: none;
+    padding: 13px 4px;
+    color: #64748B;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+}
+
+.inventory-tab.active {
+    color: var(--primary-color, #123B2A);
+    border-bottom-color: var(--accent-color, #16A34A);
+}
+
+.inventory-panel {
+    background: #fff;
+    padding: 22px;
+    border: 1px solid #E5E7EB;
+    border-radius: 12px;
+    min-width: 0;
+}
+
+.inventory-panel-heading {
+    margin-bottom: 20px;
+}
+
+.inventory-filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.inventory-filters input,
+.inventory-filters select,
+.inventory-form-group input,
+.inventory-form-group select,
+.inventory-form-group textarea {
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid #CBD5E1;
+    border-radius: 7px;
+    background: #fff;
+    color: #1E293B;
+    font: inherit;
+    font-size: 14px;
+}
+
+.inventory-filters input {
+    flex: 1 1 260px;
+}
+
+.inventory-filters select {
+    flex: 0 1 190px;
+}
+
+.inventory-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.inventory-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+.inventory-table th,
+.inventory-table td {
+    padding: 14px 12px;
+    text-align: left;
+    border-bottom: 1px solid #EAEFF3;
+    font-size: 13px;
+}
+
+.inventory-table th {
+    background: #F8FAFC;
+    color: #475569;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.inventory-table td {
+    color: #334155;
+}
+
+.inventory-product-name {
+    font-weight: 600;
+    color: #172B24;
+}
+
+.inventory-product-unit {
+    color: #94A3B8;
+    font-size: 12px;
+}
+
+.inventory-stock-badge {
+    display: inline-block;
+    padding: 5px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.inventory-stock-normal {
+    background: #DCFCE7;
+    color: #166534;
+}
+
+.inventory-stock-low {
+    background: #FEF3C7;
+    color: #92400E;
+}
+
+.inventory-stock-out {
+    background: #FEE2E2;
+    color: #991B1B;
+}
+
+.inventory-action-button {
+    border: none;
+    background: #E8F5ED;
+    color: #166534;
+    border-radius: 6px;
+    padding: 7px 10px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.inventory-action-button:hover {
+    background: #D1FAE5;
+}
+
+.inventory-empty {
+    padding: 35px !important;
+    text-align: center !important;
+    color: #94A3B8 !important;
+}
+
+.inventory-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+    color: #64748B;
+    font-size: 13px;
+}
+
+.inventory-pagination button {
+    padding: 8px 13px;
+    margin-left: 5px;
+    border: 1px solid #CBD5E1;
+    background: #fff;
+    color: #334155;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.inventory-pagination button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.inventory-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 1200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(15, 23, 42, 0.55);
+}
+
+.inventory-modal.hidden {
+    display: none;
+}
+
+.inventory-modal-content {
+    width: 100%;
+    max-width: 480px;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 25px;
+    background: #fff;
+    border-radius: 14px;
+    box-shadow: 0 15px 45px rgba(0, 0, 0, 0.18);
+}
+
+.inventory-modal-heading {
+    margin-bottom: 24px;
+}
+
+.inventory-modal-close {
+    border: none;
+    background: none;
+    color: #64748B;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.inventory-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 17px;
+}
+
+.inventory-form-group label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.inventory-form-group input,
+.inventory-form-group select,
+.inventory-form-group textarea {
+    width: 100%;
+}
+
+.inventory-form-group textarea {
+    resize: vertical;
+}
+
+.inventory-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.inventory-alert {
+    padding: 13px 16px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+}
+
+.inventory-alert.success {
+    color: #166534;
+    background: #DCFCE7;
+}
+
+.inventory-alert.error {
+    color: #991B1B;
+    background: #FEE2E2;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Tablet */
+@media (max-width: 1000px) {
+    .inventory-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .inventory-page {
+        padding: 18px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+    .inventory-page {
+        padding: 14px;
+    }
+
+    .inventory-page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .inventory-page-heading .inventory-primary-button {
+        width: 100%;
+    }
+
+    .inventory-summary-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    .inventory-summary-card {
+        padding: 14px 10px;
+        gap: 9px;
+    }
+
+    .summary-icon {
+        width: 34px;
+        height: 34px;
+        font-size: 17px;
+    }
+
+    .inventory-summary-card p {
+        font-size: 11px;
+    }
+
+    .inventory-summary-card h3 {
+        font-size: 20px;
+    }
+
+    .inventory-panel {
+        padding: 14px;
+    }
+
+    .inventory-filters {
+        flex-direction: column;
+    }
+
+    .inventory-filters input,
+    .inventory-filters select,
+    .inventory-filters button {
+        width: 100%;
+        flex: 1 1 auto;
+    }
+
+    .inventory-tabs {
+        gap: 16px;
+        overflow-x: auto;
+    }
+
+    .inventory-tab {
+        white-space: nowrap;
+    }
+
+    .inventory-pagination {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .inventory-modal-content {
+        padding: 18px;
+    }
+}

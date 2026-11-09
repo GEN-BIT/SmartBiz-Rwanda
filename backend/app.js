@@ -9,6 +9,8 @@ const errorHandler = require("./src/middleware/error-handler");
 
 const authRoutes = require("./src/routes/auth.routes");
 const businessRoutes = require("./src/routes/business.routes");
+const categoryRoutes = require("./src/routes/category.routes");
+const productRoutes = require("./src/routes/product.routes");
 
 const app = express();
 
@@ -52,6 +54,12 @@ app.use(`${appConfig.apiPrefix}/auth`, authRoutes);
 
 // Business routes
 app.use(`${appConfig.apiPrefix}/businesses`, businessRoutes);
+
+// Category routes
+app.use(`${appConfig.apiPrefix}/businesses`, categoryRoutes);
+
+// Product routes
+app.use(`${appConfig.apiPrefix}/businesses`, productRoutes);
 
 // Handle unknown routes
 app.use((req, res) => {

@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Inventory Management | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/inventory.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div id="sidebarMount"></div>
+
+    <main class="app-main">
+
+        <header class="topbar">
+            <div class="topbar-left">
+                <button
+                    type="button"
+                    class="menu-toggle"
+                    id="menuToggle"
+                    aria-label="Open navigation menu"
+                >
+                    ☰
+                </button>
+
+                <div>
+                    <h1>Inventory</h1>
+                    <p>Monitor and manage your business stock.</p>
+                </div>
+            </div>
+
+            <div class="user-information">
+                <span id="userName">Loading...</span>
+            </div>
+        </header>
+
+        <section class="inventory-page">
+
+            <div class="inventory-page-heading">
+                <div>
+                    <h2>Inventory Overview</h2>
+                    <p>Track product quantities and stock movements.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="inventory-primary-button"
+                    id="openAdjustmentButton"
+                >
+                    + Adjust Stock
+                </button>
+            </div>
+
+            <div class="inventory-alert hidden" id="inventoryAlert"></div>
+
+            <!-- Inventory summary -->
+            <section class="inventory-summary-grid">
+
+                <article class="inventory-summary-card">
+                    <div class="summary-icon">▦</div>
+                    <div>
+                        <p>Total Products</p>
+                        <h3 id="totalProducts">0</h3>
+                    </div>
+                </article>
+
+                <article class="inventory-summary-card">
+                    <div class="summary-icon">✓</div>
+                    <div>
+                        <p>Products In Stock</p>
+                        <h3 id="productsInStock">0</h3>
+                    </div>
+                </article>
+
+                <article class="inventory-summary-card warning-card">
+                    <div class="summary-icon">!</div>
+                    <div>
+                        <p>Low Stock</p>
+                        <h3 id="lowStockProducts">0</h3>
+                    </div>
+                </article>
+
+                <article class="inventory-summary-card danger-card">
+                    <div class="summary-icon">×</div>
+                    <div>
+                        <p>Out of Stock</p>
+                        <h3 id="outOfStockProducts">0</h3>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- Navigation tabs -->
+            <div class="inventory-tabs">
+                <button
+                    type="button"
+                    class="inventory-tab active"
+                    data-tab="stock"
+                >
+                    Stock Overview
+                </button>
+
+                <button
+                    type="button"
+                    class="inventory-tab"
+                    data-tab="movements"
+                >
+                    Stock Movements
+                </button>
+            </div>
+
+            <!-- Stock overview -->
+            <section class="inventory-panel" id="stockPanel">
+
+                <div class="inventory-panel-heading">
+                    <div>
+                        <h3>Product Stock</h3>
+                        <p>View the current stock levels of your products.</p>
+                    </div>
+                </div>
+
+                <div class="inventory-filters">
+
+                    <input
+                        type="search"
+                        id="inventorySearch"
+                        placeholder="Search product, SKU or barcode..."
+                    >
+
+                    <select id="stockStatusFilter">
+                        <option value="">All Stock Levels</option>
+                        <option value="normal">Normal Stock</option>
+                        <option value="low">Low Stock</option>
+                        <option value="out">Out of Stock</option>
+                    </select>
+
+                    <select id="productStatusFilter">
+                        <option value="active">Active Products</option>
+                        <option value="inactive">Inactive Products</option>
+                    </select>
+
+                    <button
+                        type="button"
+                        class="inventory-secondary-button"
+                        id="clearInventoryFilters"
+                    >
+                        Clear Filters
+                    </button>
+
+                </div>
+
+                <div class="inventory-table-wrapper">
+
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>SKU</th>
+                                <th>Category</th>
+                                <th>Available Stock</th>
+                                <th>Reorder Level</th>
+                                <th>Stock Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="inventoryTableBody">
+                            <tr>
+                                <td colspan="7" class="inventory-empty">
+                                    Loading inventory...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="inventory-pagination">
+                    <span id="inventoryPaginationInfo">Page 1</span>
+
+                    <div>
+                        <button type="button" id="inventoryPreviousPage">
+                            Previous
+                        </button>
+
+                        <button type="button" id="inventoryNextPage">
+                            Next
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- Stock movements -->
+            <section class="inventory-panel hidden" id="movementsPanel">
+
+                <div class="inventory-panel-heading">
+                    <div>
+                        <h3>Stock Movement History</h3>
+                        <p>Review recorded stock changes.</p>
+                    </div>
+                </div>
+
+                <div class="inventory-filters">
+
+                    <select id="movementTypeFilter">
+                        <option value="">All Movement Types</option>
+                        <option value="opening_stock">Opening Stock</option>
+                        <option value="purchase">Purchase</option>
+                        <option value="sale">Sale</option>
+                        <option value="sale_return">Sale Return</option>
+                        <option value="purchase_return">Purchase Return</option>
+                        <option value="adjustment">Adjustment</option>
+                        <option value="damage">Damage</option>
+                        <option value="expired">Expired</option>
+                    </select>
+
+                    <button
+                        type="button"
+                        class="inventory-secondary-button"
+                        id="refreshMovements"
+                    >
+                        Refresh History
+                    </button>
+
+                </div>
+
+                <div class="inventory-table-wrapper">
+
+                    <table class="inventory-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Product</th>
+                                <th>Movement Type</th>
+                                <th>Quantity</th>
+                                <th>Reference</th>
+                                <th>Notes</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="movementsTableBody">
+                            <tr>
+                                <td colspan="6" class="inventory-empty">
+                                    Loading movement history...
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="inventory-pagination">
+                    <span id="movementPaginationInfo">Page 1</span>
+
+                    <div>
+                        <button type="button" id="movementPreviousPage">
+                            Previous
+                        </button>
+
+                        <button type="button" id="movementNextPage">
+                            Next
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+        </section>
+
+    </main>
+
+    <!-- Stock adjustment modal -->
+    <div class="inventory-modal hidden" id="adjustmentModal">
+
+        <div class="inventory-modal-content">
+
+            <div class="inventory-modal-heading">
+                <div>
+                    <h2>Adjust Stock</h2>
+                    <p>Record a manual change to product stock.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="inventory-modal-close"
+                    id="closeAdjustmentButton"
+                    aria-label="Close"
+                >
+                    ×
+                </button>
+            </div>
+
+            <form id="adjustmentForm">
+
+                <div class="inventory-form-group">
+                    <label for="adjustmentProduct">Product</label>
+
+                    <select id="adjustmentProduct" required>
+                        <option value="">Select a product</option>
+                    </select>
+                </div>
+
+                <div class="inventory-form-group">
+                    <label for="adjustmentType">Adjustment Type</label>
+
+                    <select id="adjustmentType" required>
+                        <option value="">Select adjustment type</option>
+                        <option value="increase">Increase Stock</option>
+                        <option value="decrease">Decrease Stock</option>
+                        <option value="damage">Damaged Stock</option>
+                        <option value="expired">Expired Stock</option>
+                    </select>
+                </div>
+
+                <div class="inventory-form-group">
+                    <label for="adjustmentQuantity">Quantity</label>
+
+                    <input
+                        type="number"
+                        id="adjustmentQuantity"
+                        min="0.001"
+                        step="0.001"
+                        placeholder="Enter quantity"
+                        required
+                    >
+                </div>
+
+                <div class="inventory-form-group">
+                    <label for="adjustmentNotes">Reason / Notes</label>
+
+                    <textarea
+                        id="adjustmentNotes"
+                        rows="3"
+                        maxlength="255"
+                        placeholder="Explain why this adjustment is being made..."
+                    ></textarea>
+                </div>
+
+                <div class="inventory-modal-actions">
+                    <button
+                        type="button"
+                        class="inventory-secondary-button"
+                        id="cancelAdjustmentButton"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="inventory-primary-button"
+                        id="saveAdjustmentButton"
+                    >
+                        Save Adjustment
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/services/inventory.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/inventory.js"></script>
+
+</body>
+</html>
