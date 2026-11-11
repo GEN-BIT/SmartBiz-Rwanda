@@ -189,3 +189,170 @@
     font-size: 12px;
     font-weight: 700;
 }
+
+
+/* =====================================================
+   SMARTBIZ RWANDA - SHARED BUTTON DESIGN SYSTEM
+   ===================================================== */
+
+:root {
+    --sb-primary: #124b35;
+    --sb-primary-hover: #0d3929;
+    --sb-secondary: #f1f5f9;
+    --sb-secondary-hover: #e2e8f0;
+    --sb-danger: #dc2626;
+    --sb-danger-hover: #b91c1c;
+    --sb-success: #15803d;
+    --sb-border: #dce4ee;
+    --sb-text: #26364a;
+}
+
+/* Base button */
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 40px;
+    padding: 9px 16px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .2s ease,
+                color .2s ease,
+                border-color .2s ease;
+}
+
+.btn:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, .25);
+    outline-offset: 2px;
+}
+
+.btn:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+/* Primary */
+.btn-primary {
+    background: var(--sb-primary);
+    color: #fff;
+}
+
+.btn-primary:hover:not(:disabled) {
+    background: var(--sb-primary-hover);
+}
+
+/* Secondary */
+.btn-secondary {
+    background: var(--sb-secondary);
+    color: var(--sb-text);
+    border-color: var(--sb-border);
+}
+
+.btn-secondary:hover:not(:disabled) {
+    background: var(--sb-secondary-hover);
+}
+
+/* Outline */
+.btn-outline {
+    background: #fff;
+    color: var(--sb-primary);
+    border-color: var(--sb-primary);
+}
+
+.btn-outline:hover:not(:disabled) {
+    background: #ecfdf5;
+}
+
+/* Danger */
+.btn-danger {
+    background: #fee2e2;
+    color: var(--sb-danger);
+    border-color: #fecaca;
+}
+
+.btn-danger:hover:not(:disabled) {
+    background: #fecaca;
+}
+
+/* Success */
+.btn-success {
+    background: var(--sb-success);
+    color: #fff;
+}
+
+.btn-success:hover:not(:disabled) {
+    background: #166534;
+}
+
+/* Small action buttons */
+.btn-sm {
+    min-height: 32px;
+    padding: 6px 11px;
+    font-size: 12px;
+    border-radius: 7px;
+}
+
+/* Large buttons */
+.btn-lg {
+    min-height: 48px;
+    padding: 12px 22px;
+    font-size: 15px;
+}
+
+/* Icon-only buttons */
+.btn-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 1px solid var(--sb-border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--sb-text);
+    cursor: pointer;
+}
+
+.btn-icon:hover {
+    background: var(--sb-secondary);
+}
+
+/* Button groups */
+.btn-group {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+/* Full width */
+.btn-block {
+    display: flex;
+    width: 100%;
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .btn-mobile-block {
+        display: flex;
+        width: 100%;
+    }
+
+    .btn-group-mobile-stack {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .btn-group-mobile-stack .btn {
+        width: 100%;
+    }
+}

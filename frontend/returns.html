@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage sales returns and refunds in SmartBiz Rwanda.">
+    <title>Returns & Refunds | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/returns.css">
+</head>
+<body>
+    <div class="app-layout">
+        <div id="sidebarMount"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="app-main returns-page">
+            <header class="page-header">
+                <div class="page-heading">
+<button class="menu-toggle" id="menuToggle"
+        type="button" aria-label="Open navigation"
+        aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+                    <div>
+                        <p class="page-eyebrow">Sales management</p>
+                        <h1>Returns & Refunds</h1>
+                        <p class="page-subtitle">
+                            Manage returned products and customer refunds.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="newReturnBtn" type="button">
+                        + Process Return
+                    </button>
+                </div>
+            </header>
+
+            <!-- Summary cards -->
+            <section class="returns-stats-grid">
+                <article class="return-stat-card">
+                    <div class="return-stat-icon total-return-icon">R</div>
+                    <div>
+                        <p>Total returns</p>
+                        <h2 id="totalReturns">—</h2>
+                    </div>
+                </article>
+
+                <article class="return-stat-card">
+                    <div class="return-stat-icon completed-return-icon">✓</div>
+                    <div>
+                        <p>Completed returns</p>
+                        <h2 id="completedReturns">—</h2>
+                    </div>
+                </article>
+
+                <article class="return-stat-card">
+                    <div class="return-stat-icon pending-return-icon">P</div>
+                    <div>
+                        <p>Pending returns</p>
+                        <h2 id="pendingReturns">—</h2>
+                    </div>
+                </article>
+
+                <article class="return-stat-card">
+                    <div class="return-stat-icon refund-return-icon">₣</div>
+                    <div>
+                        <p>Total refund value</p>
+                        <h2 id="totalRefundValue">RWF —</h2>
+                    </div>
+                </article>
+            </section>
+
+            <!-- Filters -->
+            <section class="returns-toolbar content-card">
+                <div class="returns-search">
+                    <span aria-hidden="true">⌕</span>
+                    <input type="search" id="returnSearch"
+                           placeholder="Search return or sale reference..."
+                           aria-label="Search returns">
+                </div>
+
+                <div class="returns-filters">
+                    <select id="returnStatusFilter" aria-label="Filter return status">
+                        <option value="">All statuses</option>
+                        <option value="pending">Pending</option>
+                        <option value="completed">Completed</option>
+                        <option value="rejected">Rejected</option>
+                    </select>
+
+                    <input type="date" id="returnStartDate"
+                           aria-label="Start date">
+
+                    <input type="date" id="returnEndDate"
+                           aria-label="End date">
+
+                    <button class="btn btn-secondary" id="filterReturnsBtn"
+                            type="button">Apply</button>
+                    <button class="btn btn-outline" id="resetReturnsBtn"
+                            type="button">Reset</button>
+                </div>
+            </section>
+
+            <!-- Returns table -->
+            <section class="content-card returns-table-card">
+                <div class="section-heading">
+                    <div>
+                        <h2>Return records</h2>
+                        <p>Review returned products and their refund information.</p>
+                    </div>
+                    <span class="returns-count" id="returnsCount">0 records</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table returns-table">
+                        <thead>
+                            <tr>
+                                <th>Return reference</th>
+                                <th>Sale reference</th>
+                                <th>Return date</th>
+                                <th>Reason</th>
+                                <th>Refund amount</th>
+                                <th>Status</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="returnsTableBody">
+                            <tr>
+                                <td colspan="7" class="returns-empty">
+                                    Return records will appear here when connected
+                                    to the returns API.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="returns-pagination">
+                    <span id="returnsPageInfo">Page 1</span>
+                    <div>
+                        <button class="btn btn-secondary btn-sm"
+                                id="previousReturnsPage" type="button" disabled>
+                            Previous
+                        </button>
+                        <button class="btn btn-secondary btn-sm"
+                                id="nextReturnsPage" type="button" disabled>
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Process return modal -->
+    <div class="modal-overlay" id="returnModal" hidden>
+        <div class="return-modal" role="dialog"
+             aria-modal="true" aria-labelledby="returnModalTitle">
+
+            <div class="modal-heading">
+                <div>
+                    <h2 id="returnModalTitle">Process a return</h2>
+                    <p>Provide the sale reference and details of the returned items.</p>
+                </div>
+                <button class="modal-close" type="button"
+                        data-close-return-modal aria-label="Close">&times;</button>
+            </div>
+
+            <form id="returnForm">
+                <div class="form-field">
+                    <label for="returnSaleReference">Sale reference</label>
+                    <input type="text" id="returnSaleReference"
+                           name="sale_reference" required
+                           placeholder="Enter original sale reference">
+                </div>
+
+                <div class="form-field">
+                    <label for="returnReason">Reason for return</label>
+                    <select id="returnReason" name="reason" required>
+                        <option value="">Select reason</option>
+                        <option value="defective">Defective product</option>
+                        <option value="wrong_item">Wrong product supplied</option>
+                        <option value="customer_request">Customer request</option>
+                        <option value="damaged">Damaged product</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-field">
+                    <label for="returnDescription">Additional information</label>
+                    <textarea id="returnDescription" name="description"
+                              rows="3"
+                              placeholder="Explain the reason for the return"></textarea>
+                </div>
+
+                <div class="return-info-note">
+                    <strong>Important:</strong>
+                    Returned products and refund amounts must be verified against
+                    the original sale before the return is finalized.
+                </div>
+
+                <p class="form-message" id="returnFormMessage" role="alert"></p>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary"
+                            data-close-return-modal>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary"
+                            id="saveReturnBtn">
+                        Continue
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Return details modal -->
+    <div class="modal-overlay" id="returnDetailsModal" hidden>
+        <div class="return-modal" role="dialog"
+             aria-modal="true" aria-labelledby="returnDetailsTitle">
+            <div class="modal-heading">
+                <div>
+                    <h2 id="returnDetailsTitle">Return details</h2>
+                    <p>Review information about this return.</p>
+                </div>
+                <button class="modal-close" type="button"
+                        data-close-details-modal aria-label="Close">&times;</button>
+            </div>
+
+            <div id="returnDetailsContent">
+                <p class="returns-empty">Select a return to view its details.</p>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/returns.js"></script>
+</body>
+</html>

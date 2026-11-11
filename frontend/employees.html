@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage SmartBiz Rwanda business employees.">
+    <title>Employees | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/employees.css">
+</head>
+<body>
+    <div class="app-layout">
+        <div id="sidebarMount"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="app-main employees-page">
+            <header class="page-header">
+                <div class="page-heading">
+<button class="menu-toggle" id="menuToggle"
+        type="button" aria-label="Open navigation"
+        aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+                    <div>
+                        <p class="page-eyebrow">Business management</p>
+                        <h1>Employees</h1>
+                        <p class="page-subtitle">
+                            Manage your team, employee roles and account status.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <button class="btn btn-primary" id="addEmployeeBtn" type="button">
+                        <span aria-hidden="true">+</span> Add Employee
+                    </button>
+                </div>
+            </header>
+
+            <section class="employee-stats">
+                <article class="employee-stat-card">
+                    <div class="employee-stat-icon total-icon">T</div>
+                    <div>
+                        <p>Total employees</p>
+                        <h2 id="totalEmployees">—</h2>
+                    </div>
+                </article>
+
+                <article class="employee-stat-card">
+                    <div class="employee-stat-icon active-icon">A</div>
+                    <div>
+                        <p>Active employees</p>
+                        <h2 id="activeEmployees">—</h2>
+                    </div>
+                </article>
+
+                <article class="employee-stat-card">
+                    <div class="employee-stat-icon inactive-icon">I</div>
+                    <div>
+                        <p>Inactive employees</p>
+                        <h2 id="inactiveEmployees">—</h2>
+                    </div>
+                </article>
+
+                <article class="employee-stat-card">
+                    <div class="employee-stat-icon roles-icon">R</div>
+                    <div>
+                        <p>Business roles</p>
+                        <h2>4</h2>
+                    </div>
+                </article>
+            </section>
+
+            <section class="employee-toolbar content-card">
+                <div class="employee-search">
+                    <span aria-hidden="true">⌕</span>
+                    <input type="search" id="employeeSearch"
+                           placeholder="Search by employee name or email..."
+                           aria-label="Search employees">
+                </div>
+
+                <div class="employee-filters">
+                    <select id="employeeRoleFilter" aria-label="Filter by role">
+                        <option value="">All roles</option>
+                        <option value="owner">Owner</option>
+                        <option value="manager">Manager</option>
+                        <option value="cashier">Cashier</option>
+                        <option value="stock_manager">Stock Manager</option>
+                    </select>
+
+                    <select id="employeeStatusFilter" aria-label="Filter by status">
+                        <option value="">All statuses</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                    </select>
+
+                    <button class="btn btn-secondary" id="resetEmployeeFilters"
+                            type="button">
+                        Reset
+                    </button>
+                </div>
+            </section>
+
+            <section class="content-card employee-table-card">
+                <div class="section-heading">
+                    <div>
+                        <h2>Team members</h2>
+                        <p>Employees registered under your business.</p>
+                    </div>
+                    <span class="employee-count" id="employeeCount">0 employees</span>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table employee-table">
+                        <thead>
+                            <tr>
+                                <th>Employee</th>
+                                <th>Role</th>
+                                <th>Date hired</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employeesTableBody">
+                            <tr>
+                                <td colspan="5" class="employee-empty">
+                                    Employee records will appear here once connected
+                                    to the employee API.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="employee-pagination">
+                    <span id="employeePageInfo">Page 1</span>
+                    <div>
+                        <button class="btn btn-secondary btn-sm"
+                                id="previousEmployeePage" type="button" disabled>
+                            Previous
+                        </button>
+                        <button class="btn btn-secondary btn-sm"
+                                id="nextEmployeePage" type="button" disabled>
+                            Next
+                        </button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Add employee modal -->
+    <div class="modal-overlay" id="employeeModal" hidden>
+        <div class="employee-modal" role="dialog"
+             aria-modal="true" aria-labelledby="employeeModalTitle">
+            <div class="modal-heading">
+                <div>
+                    <h2 id="employeeModalTitle">Add employee</h2>
+                    <p>Enter the employee's account and business role details.</p>
+                </div>
+                <button type="button" class="modal-close"
+                        data-close-employee-modal aria-label="Close">&times;</button>
+            </div>
+
+            <form id="employeeForm">
+                <div class="form-field">
+                    <label for="employeeFullName">Full name</label>
+                    <input type="text" id="employeeFullName"
+                           name="full_name" required
+                           placeholder="Enter employee's full name">
+                </div>
+
+                <div class="form-field">
+                    <label for="employeeEmail">Email address</label>
+                    <input type="email" id="employeeEmail"
+                           name="email" required
+                           placeholder="employee@example.com">
+                </div>
+
+                <div class="form-field">
+                    <label for="employeePhone">Phone number</label>
+                    <input type="tel" id="employeePhone"
+                           name="phone"
+                           placeholder="Enter phone number">
+                </div>
+
+                <div class="form-field">
+                    <label for="employeeRole">Business role</label>
+                    <select id="employeeRole" name="role" required>
+                        <option value="">Select employee role</option>
+                        <option value="manager">Manager</option>
+                        <option value="cashier">Cashier</option>
+                        <option value="stock_manager">Stock Manager</option>
+                    </select>
+                    <small>
+                        The owner role is managed through business ownership.
+                    </small>
+                </div>
+
+                <p class="form-message" id="employeeFormMessage"
+                   role="alert"></p>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary"
+                            data-close-employee-modal>
+                        Cancel
+                    </button>
+                    <button type="submit" class="btn btn-primary"
+                            id="saveEmployeeBtn">
+                        Save Employee
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/employees.js"></script>
+</body>
+</html>

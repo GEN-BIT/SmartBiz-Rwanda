@@ -125,6 +125,7 @@ document.addEventListener("DOMContentLoaded", function () {
         bindEvents();
         await loadCategories();
         await loadProducts();
+        await loadProductStatistics();
     }
 
     function bindEvents() {
@@ -266,7 +267,6 @@ document.addEventListener("DOMContentLoaded", function () {
             }
 
             renderProducts();
-            updateStatistics(pagination);
             updatePagination(pagination);
 
             showMessage("", "info");
@@ -297,7 +297,7 @@ document.addEventListener("DOMContentLoaded", function () {
             const status = product.status || "inactive";
             const stock = Number(product.stock_quantity || 0);
             const reorderLevel = Number(product.reorder_level || 0);
-            const isLowStock = stock <= reorderLevel;
+            const isLowStock = reorderLevel > 0 && stock <= reorderLevel;
 
             return `
                 <tr>
@@ -351,29 +351,73 @@ document.addEventListener("DOMContentLoaded", function () {
         }).join("");
     }
 
-    function updateStatistics(pagination = {}) {
-        const activeCount = state.products.filter(
+    async function loadProductStatistics() {
+        const totalElement = document.getElementById("totalProducts");
+        const activeElement = document.getElementById("activeProducts");
+        const inactiveElement = document.getElementById("inactiveProducts");
+        const lowStockElement = document.getElementById("lowStockProducts");
+
+    try {
+        const pageSize = 100;
+
+        const firstResponse = await window.productService.getProducts(
+            businessId,
+            { page: 1, limit: pageSize }
+        );
+
+        const firstData = getResponseData(firstResponse);
+        const allProducts = Array.isArray(firstData) ? [...firstData] : [];
+
+        const pagination = firstResponse?.pagination ||
+            firstResponse?.data?.pagination ||
+            {};
+
+        const totalPages = Math.max(
+            1,
+            Number(
+                pagination.totalPages ??
+                pagination.total_pages ??
+                1
+            )
+        );
+
+        for (let page = 2; page <= totalPages; page++) {
+            const response = await window.productService.getProducts(
+                businessId,
+                { page, limit: pageSize }
+            );
+
+            const data = getResponseData(response);
+
+            if (Array.isArray(data)) {
+                allProducts.push(...data);
+            }
+        }
+
+        const activeCount = allProducts.filter(
             product => product.status === "active"
         ).length;
 
-        const inactiveCount = state.products.filter(
+        const inactiveCount = allProducts.filter(
             product => product.status === "inactive"
         ).length;
 
-        const lowStockCount = state.products.filter(function (product) {
-            return Number(product.stock_quantity || 0) <=
-                Number(product.reorder_level || 0);
+        const lowStockCount = allProducts.filter(function (product) {
+            const stock = Number(product.stock_quantity || 0);
+            const reorderLevel = Number(product.reorder_level || 0);
+
+            return reorderLevel > 0 && stock <= reorderLevel;
         }).length;
 
-        document.getElementById("totalProducts").textContent =
-            pagination.totalItems ??
-            pagination.total_items ??
-            state.products.length;
+        if (totalElement) totalElement.textContent = allProducts.length;
+        if (activeElement) activeElement.textContent = activeCount;
+        if (inactiveElement) inactiveElement.textContent = inactiveCount;
+        if (lowStockElement) lowStockElement.textContent = lowStockCount;
 
-        document.getElementById("activeProducts").textContent = activeCount;
-        document.getElementById("inactiveProducts").textContent = inactiveCount;
-        document.getElementById("lowStockProducts").textContent = lowStockCount;
+    } catch (error) {
+        console.error("Product statistics could not be loaded:", error);
     }
+}
 
     function updatePagination(pagination = {}) {
         const totalItems = Number(
@@ -471,6 +515,8 @@ document.addEventListener("DOMContentLoaded", function () {
     async function saveProduct(event) {
         event.preventDefault();
 
+        const editingId = state.editingProductId;
+
         const productData = {
             product_name: document.getElementById("productName").value.trim(),
             category_id: elements.categoryInput.value,
@@ -506,10 +552,10 @@ document.addEventListener("DOMContentLoaded", function () {
             elements.saveButton.disabled = true;
             elements.saveButton.textContent = "Saving...";
 
-            if (state.editingProductId) {
+            if (editingId) {
                 await window.productService.updateProduct(
                     businessId,
-                    state.editingProductId,
+                    editingId,
                     productData
                 );
 
@@ -526,12 +572,12 @@ document.addEventListener("DOMContentLoaded", function () {
 
             closeModal();
             await loadProducts();
+            await loadProductStatistics();
         } catch (error) {
             showFormMessage(getErrorMessage(error), "error");
         } finally {
             elements.saveButton.disabled = false;
-            elements.saveButton.textContent =
-                state.editingProductId ? "Update Product" : "Save Product";
+            elements.saveButton.textContent = "Save Product";
         }
     }
 
@@ -585,6 +631,7 @@ document.addEventListener("DOMContentLoaded", function () {
             );
 
             await loadProducts();
+            await loadProductStatistics();
         } catch (error) {
             showMessage(getErrorMessage(error), "error");
         }

@@ -1,84 +1,43 @@
-﻿/*
- * SmartBiz Rwanda - Customer Details Page
- */
+﻿
+(function () {
+    "use strict";
 
-document.addEventListener("DOMContentLoaded", async function () {
+    const state = {
+        customerId: null,
+        businessId: null,
+        sales: [],
+        payments: []
+    };
 
-    const token = sessionStorage.getItem("smartbiz_token");
-    const storedMembership = sessionStorage.getItem("smartbiz_membership");
-
-    const loadingElement = document.getElementById("customerDetailsLoading");
-    const contentElement = document.getElementById("customerDetailsContent");
-    const messageElement = document.getElementById("customerDetailsMessage");
-
-    let membership;
-
-    if (!token || !storedMembership) {
-        window.location.href = "login.html";
-        return;
-    }
-
-    try {
-        membership = JSON.parse(storedMembership);
-    } catch (error) {
-        sessionStorage.removeItem("smartbiz_membership");
-        window.location.href = "login.html";
-        return;
-    }
-
-    if (
-        !membership.business_id ||
-        membership.membership_status !== "active" ||
-        (membership.business_status &&
-            membership.business_status !== "active")
-    ) {
-        window.location.href = "login.html";
-        return;
-    }
-
-    if (typeof window.renderSidebar === "function") {
-        window.renderSidebar(membership);
-    }
-
-    const userName =
-        membership.user_name ||
-        membership.full_name ||
-        membership.name ||
-        "User";
-
-    document.getElementById("topbarUserName").textContent = userName;
-    document.getElementById("topbarUserRole").textContent =
-        String(membership.role || "Business member").replaceAll("_", " ");
-
-    document.getElementById("userAvatar").textContent =
-        userName.charAt(0).toUpperCase();
-
-    const businessId = membership.business_id;
-    const params = new URLSearchParams(window.location.search);
-    const customerId = params.get("customerId");
-
-    let currentCustomer = null;
-
-    const currencyFormatter = new Intl.NumberFormat("en-RW", {
-        style: "currency",
-        currency: "RWF",
-        maximumFractionDigits: 0
-    });
-
-    function money(value) {
-        return currencyFormatter.format(Number(value || 0));
-    }
+    const elements = {
+        name: document.getElementById("customerName"),
+        phone: document.getElementById("customerPhone"),
+        email: document.getElementById("customerEmail"),
+        address: document.getElementById("customerAddress"),
+        creditLimit: document.getElementById("customerCreditLimit"),
+        outstanding: document.getElementById("customerOutstanding"),
+        salesTable: document.getElementById("customerSalesTable"),
+        paymentsTable: document.getElementById("customerPaymentsTable")
+    };
 
     function escapeHTML(value) {
-        return String(value ?? "").replace(/[&<>"']/g, function (character) {
-            return {
-                "&": "&amp;",
-                "<": "&lt;",
-                ">": "&gt;",
-                '"': "&quot;",
-                "'": "&#039;"
-            }[character];
-        });
+        return String(value ?? "").replace(/[&<>"']/g, char => ({
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#039;"
+        })[char]);
+    }
+
+    function money(value) {
+        const amount = Number(value || 0);
+
+        return new Intl.NumberFormat("en-RW", {
+            style: "currency",
+            currency: "RWF",
+            maximumFractionDigits: 0
+        }).format(Number.isFinite(amount) ? amount : 0);
     }
 
     function formatDate(value) {
@@ -95,233 +54,184 @@ document.addEventListener("DOMContentLoaded", async function () {
         });
     }
 
+    function getMembership() {
+        try {
+            return JSON.parse(
+                sessionStorage.getItem("smartbiz_membership") || "null"
+            );
+        } catch {
+            return null;
+        }
+    }
+
     function showMessage(message, type = "error") {
+        let messageElement = document.getElementById("customerDetailsMessage");
+
+        if (!messageElement) {
+            messageElement = document.createElement("div");
+            messageElement.id = "customerDetailsMessage";
+            messageElement.setAttribute("role", "status");
+
+            const container = document.querySelector("main");
+
+            if (container) {
+                container.prepend(messageElement);
+            }
+        }
+
+        if (!messageElement) return;
+
         messageElement.textContent = message;
-        messageElement.className =
-            type === "success"
-                ? "page-message success"
-                : "page-message";
+        messageElement.className = `customer-details-message ${type}`;
         messageElement.hidden = false;
     }
 
-    function hideLoading() {
-        loadingElement.hidden = true;
+    function setText(element, value) {
+        if (element) {
+            element.textContent = value ?? "—";
+        }
     }
 
-    function renderSales(sales) {
-        const tbody = document.getElementById("customerSalesTable");
+    function renderCustomer(customer) {
+        if (!customer) {
+            showMessage("Customer information could not be found.");
+            return;
+        }
 
-        document.getElementById("salesHistoryCount").textContent =
-            `${sales.length} records`;
+        setText(elements.name, customer.customer_name);
+        setText(elements.phone, customer.phone);
+        setText(elements.email, customer.email);
+        setText(elements.address, customer.address);
+        setText(elements.creditLimit, money(customer.credit_limit));
 
-        if (!sales.length) {
-            tbody.innerHTML = `
+        const outstanding = state.sales.reduce((total, sale) => {
+            return total + Math.max(0, Number(sale.balance_due || 0));
+        }, 0);
+
+        setText(elements.outstanding, money(outstanding));
+
+        document.title =
+            `${customer.customer_name || "Customer"} | SmartBiz Rwanda`;
+    }
+
+    function renderSales() {
+        if (!elements.salesTable) return;
+
+        if (!state.sales.length) {
+            elements.salesTable.innerHTML = `
                 <tr>
-                    <td colspan="7" class="table-empty">
-                        No sales have been recorded for this customer.
+                    <td colspan="8" class="empty-state">
+                        No sales records found for this customer.
                     </td>
                 </tr>
             `;
             return;
         }
 
-        tbody.innerHTML = sales.map(sale => {
-            const paymentStatus = String(sale.payment_status || "unpaid");
-            const saleStatus = String(sale.sale_status || "completed");
-
-            return `
-                <tr>
-                    <td>
-                        <a class="invoice-link"
-                           href="sale-details.html?saleId=${encodeURIComponent(sale.sale_id)}">
-                            ${escapeHTML(sale.invoice_number || `#${sale.sale_id}`)}
-                        </a>
-                    </td>
-                    <td>${formatDate(sale.created_at)}</td>
-                    <td>${money(sale.total_amount)}</td>
-                    <td>${money(sale.amount_paid)}</td>
-                    <td>${money(sale.balance_due)}</td>
-                    <td>
-                        <span class="payment-status ${escapeHTML(paymentStatus)}">
-                            ${escapeHTML(paymentStatus.replaceAll("_", " "))}
-                        </span>
-                    </td>
-                    <td>
-                        <span class="sale-status ${escapeHTML(saleStatus)}">
-                            ${escapeHTML(saleStatus.replaceAll("_", " "))}
-                        </span>
-                    </td>
-                </tr>
-            `;
-        }).join("");
-    }
-
-    function renderPayments(payments) {
-        const tbody = document.getElementById("customerPaymentsTable");
-
-        document.getElementById("paymentHistoryCount").textContent =
-            `${payments.length} records`;
-
-        if (!payments.length) {
-            tbody.innerHTML = `
-                <tr>
-                    <td colspan="6" class="table-empty">
-                        No payments have been recorded for this customer.
-                    </td>
-                </tr>
-            `;
-            return;
-        }
-
-        tbody.innerHTML = payments.map(payment => `
+        elements.salesTable.innerHTML = state.sales.map(sale => `
             <tr>
-                <td>${formatDate(payment.payment_date)}</td>
+                <td>${escapeHTML(sale.invoice_number || sale.sale_id)}</td>
+                <td>${escapeHTML(formatDate(sale.created_at))}</td>
+                <td>${escapeHTML(money(sale.total_amount))}</td>
+                <td>${escapeHTML(money(sale.amount_paid))}</td>
+                <td>${escapeHTML(money(sale.balance_due))}</td>
+                <td>${escapeHTML(sale.payment_status || "—")}</td>
+                <td>${escapeHTML(sale.sale_status || "—")}</td>
                 <td>
-                    ${payment.sale_id
-                        ? escapeHTML(`#${payment.sale_id}`)
-                        : "—"}
+                    <a class="btn btn-outline btn-sm"
+                       href="sale-details.html?saleId=${encodeURIComponent(sale.sale_id)}">
+                        View
+                    </a>
                 </td>
-                <td>${money(payment.amount)}</td>
-                <td>${escapeHTML(
-                    String(payment.payment_method || "other").replaceAll("_", " ")
-                )}</td>
-                <td>${escapeHTML(
-                    String(payment.payment_type || "sale_payment").replaceAll("_", " ")
-                )}</td>
-                <td>${escapeHTML(payment.transaction_reference || "—")}</td>
             </tr>
         `).join("");
     }
 
-    function renderCustomer(history) {
-        const customer = history.customer;
-        const sales = Array.isArray(history.sales) ? history.sales : [];
-        const payments = Array.isArray(history.payments) ? history.payments : [];
+    function renderPayments() {
+        if (!elements.paymentsTable) return;
 
-        currentCustomer = customer;
+        if (!state.payments.length) {
+            elements.paymentsTable.innerHTML = `
+                <tr>
+                    <td colspan="6" class="empty-state">
+                        No payment records found.
+                    </td>
+                </tr>
+            `;
+            return;
+        }
 
-        const completedSales = sales.filter(
-            sale => sale.sale_status === "completed"
-        );
+        elements.paymentsTable.innerHTML = state.payments.map(payment => `
+            <tr>
+                <td>${escapeHTML(payment.payment_id)}</td>
+                <td>${escapeHTML(payment.sale_id)}</td>
+                <td>${escapeHTML(formatDate(payment.payment_date))}</td>
+                <td>${escapeHTML(money(payment.amount))}</td>
+                <td>${escapeHTML(payment.payment_method || "—")}</td>
+                <td>${escapeHTML(payment.payment_type || "—")}</td>
+            </tr>
+        `).join("");
+    }
 
-        const totalSpent = completedSales.reduce(
-            (total, sale) => total + Number(sale.total_amount || 0),
-            0
-        );
+    async function loadCustomerDetails() {
+        try {
+            if (!window.authService || !window.customerService) {
+                throw new Error("Required services are not available.");
+            }
 
-        const outstanding = sales.reduce(
-            (total, sale) => {
-                if (sale.sale_status !== "completed") return total;
-                return total + Number(sale.balance_due || 0);
-            },
-            0
-        );
-
-        const paymentsTotal = payments
-            .filter(payment => payment.payment_type !== "refund")
-            .reduce(
-                (total, payment) => total + Number(payment.amount || 0),
-                0
+            const response = await window.customerService.getCustomerHistory(
+                state.businessId,
+                state.customerId
             );
 
-        const openBalances = completedSales.filter(
-            sale => Number(sale.balance_due || 0) > 0
-        ).length;
+            if (!response || response.status === "error") {
+                throw new Error(
+                    response?.message || "Unable to load customer history."
+                );
+            }
 
-        const customerName = customer.customer_name || "Customer";
+            const data = response.data || {};
 
-        document.getElementById("customerPageTitle").textContent =
-            customerName;
+            state.sales = Array.isArray(data.sales) ? data.sales : [];
+            state.payments = Array.isArray(data.payments)
+                ? data.payments
+                : [];
 
-        document.getElementById("customerName").textContent = customerName;
-        document.getElementById("customerAvatar").textContent =
-            customerName.charAt(0).toUpperCase();
+            renderCustomer(data.customer);
+            renderSales();
+            renderPayments();
 
-        document.getElementById("customerContact").textContent =
-            customer.phone || customer.email || "No contact information";
-
-        document.getElementById("customerId").textContent =
-            customer.customer_id;
-
-        document.getElementById("customerSince").textContent =
-            formatDate(customer.created_at);
-
-        document.getElementById("customerPhone").textContent =
-            customer.phone || "Not provided";
-
-        document.getElementById("customerEmail").textContent =
-            customer.email || "Not provided";
-
-        document.getElementById("customerAddress").textContent =
-            customer.address || "Not provided";
-
-        document.getElementById("customerStatus").textContent =
-            customer.status || "active";
-
-        document.getElementById("customerStatus").className =
-            `status-badge ${customer.status === "inactive" ? "inactive" : ""}`;
-
-        document.getElementById("customerAccountStatus").textContent =
-            customer.status || "active";
-
-        document.getElementById("customerTotalPurchases").textContent =
-            completedSales.length.toLocaleString();
-
-        document.getElementById("customerTotalSpent").textContent =
-            money(totalSpent);
-
-        document.getElementById("customerOutstanding").textContent =
-            money(outstanding);
-
-        document.getElementById("customerCreditLimit").textContent =
-            money(customer.credit_limit);
-
-        document.getElementById("customerPaymentCount").textContent =
-            payments.length.toLocaleString();
-
-        document.getElementById("customerPaymentsTotal").textContent =
-            money(paymentsTotal);
-
-        document.getElementById("customerOpenBalances").textContent =
-            openBalances.toLocaleString();
-
-        renderSales(sales);
-        renderPayments(payments);
-
-        document.getElementById("editCustomerButton").disabled = false;
-        contentElement.hidden = false;
-    }
-
-    document.getElementById("editCustomerButton").addEventListener(
-        "click",
-        function () {
-            if (!currentCustomer) return;
-
-            window.location.href =
-                `customers.html?editCustomer=${encodeURIComponent(currentCustomer.customer_id)}`;
+        } catch (error) {
+            console.error("Customer details error:", error);
+            showMessage(error.message || "Unable to load customer details.");
         }
-    );
-
-    if (!customerId || !/^\d+$/.test(customerId)) {
-        hideLoading();
-        showMessage("A valid customer ID was not provided.");
-        return;
     }
 
-    try {
-        const response = await window.customerService.getCustomerHistory(
-            businessId,
-            customerId
-        );
+    function initializePage() {
+        const token = sessionStorage.getItem("smartbiz_token");
+        const membership = getMembership();
 
-        if (!response.data || !response.data.customer) {
-            throw new Error("Customer information could not be found.");
+        if (!token || !membership || !membership.business_id) {
+            window.location.href = "login.html";
+            return;
         }
 
-        renderCustomer(response.data);
-    } catch (error) {
-        showMessage(error.message || "Unable to load customer information.");
-    } finally {
-        hideLoading();
+        state.businessId = membership.business_id;
+
+        const params = new URLSearchParams(window.location.search);
+        state.customerId = params.get("customerId");
+
+        if (!state.customerId) {
+            showMessage("No customer was selected.");
+            return;
+        }
+
+        if (typeof window.renderSidebar === "function") {
+            window.renderSidebar(membership);
+        }
+
+        loadCustomerDetails();
     }
-});
+
+    document.addEventListener("DOMContentLoaded", initializePage);
+})();

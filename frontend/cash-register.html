@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage SmartBiz Rwanda cash register sessions.">
+    <title>Cash Register | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/cash-register.css">
+</head>
+<body>
+    <div class="app-layout">
+        <div id="sidebarMount"></div>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="app-main">
+            <header class="page-header">
+                <div class="page-heading">
+<button class="menu-toggle" id="menuToggle"
+        type="button" aria-label="Open navigation"
+        aria-expanded="false">
+    <span></span>
+    <span></span>
+    <span></span>
+</button>
+                    <div>
+                        <p class="page-eyebrow">Sales management</p>
+                        <h1>Cash Register</h1>
+                        <p class="page-subtitle">
+                            Open, monitor and close your cash register sessions.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="header-actions">
+                    <span class="register-date" id="currentDate"></span>
+                </div>
+            </header>
+
+            <section class="register-status-card" aria-live="polite">
+                <div class="register-status-info">
+                    <div class="status-icon" id="registerStatusIcon">
+                        <span>RWF</span>
+                    </div>
+                    <div>
+                        <p class="status-label">Current register status</p>
+                        <h2 id="registerStatus">Checking status...</h2>
+                        <p class="status-description" id="registerStatusDescription">
+                            Loading your register information.
+                        </p>
+                    </div>
+                </div>
+
+                <div class="register-status-actions">
+                    <button class="btn btn-primary" id="openRegisterBtn" type="button">
+                        Open Register
+                    </button>
+                    <button class="btn btn-danger" id="closeRegisterBtn"
+                            type="button" hidden>
+                        Close Register
+                    </button>
+                </div>
+            </section>
+
+            <section class="register-summary-grid">
+                <article class="register-summary-card">
+                    <div class="summary-card-top">
+                        <span>Opening balance</span>
+                        <span class="summary-icon">R</span>
+                    </div>
+                    <h3 id="openingBalance">RWF 0</h3>
+                    <p>Amount recorded when the session opens</p>
+                </article>
+
+                <article class="register-summary-card">
+                    <div class="summary-card-top">
+                        <span>Expected balance</span>
+                        <span class="summary-icon">E</span>
+                    </div>
+                    <h3 id="expectedBalance">RWF 0</h3>
+                    <p>Expected cash in the register</p>
+                </article>
+
+                <article class="register-summary-card">
+                    <div class="summary-card-top">
+                        <span>Closing balance</span>
+                        <span class="summary-icon">C</span>
+                    </div>
+                    <h3 id="closingBalance">RWF 0</h3>
+                    <p>Counted amount when the session closes</p>
+                </article>
+
+                <article class="register-summary-card">
+                    <div class="summary-card-top">
+                        <span>Difference</span>
+                        <span class="summary-icon">±</span>
+                    </div>
+                    <h3 id="registerDifference">RWF 0</h3>
+                    <p>Difference between expected and counted cash</p>
+                </article>
+            </section>
+
+            <section class="register-content-grid">
+                <article class="content-card register-session-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Current session</h2>
+                            <p>Details of your active register session.</p>
+                        </div>
+                        <span class="session-badge" id="sessionBadge">No active session</span>
+                    </div>
+
+                    <div class="session-details">
+                        <div class="session-detail">
+                            <span>Register ID</span>
+                            <strong id="sessionRegisterId">—</strong>
+                        </div>
+                        <div class="session-detail">
+                            <span>Opened at</span>
+                            <strong id="sessionOpenedAt">—</strong>
+                        </div>
+                        <div class="session-detail">
+                            <span>Cashier</span>
+                            <strong id="sessionCashier">—</strong>
+                        </div>
+                        <div class="session-detail">
+                            <span>Session status</span>
+                            <strong id="sessionStatus">—</strong>
+                        </div>
+                    </div>
+                </article>
+
+                <article class="content-card register-notes-card">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Register guidelines</h2>
+                            <p>Keep your cash records accurate.</p>
+                        </div>
+                    </div>
+
+                    <ul class="register-guidelines">
+                        <li>Record the actual opening cash amount.</li>
+                        <li>Count cash carefully before closing a session.</li>
+                        <li>Record explanations for any cash difference.</li>
+                        <li>Close your session before leaving the register.</li>
+                    </ul>
+                </article>
+            </section>
+
+            <section class="content-card register-history-card">
+                <div class="section-heading history-heading">
+                    <div>
+                        <h2>Register history</h2>
+                        <p>Review previous cash register sessions.</p>
+                    </div>
+                    <div class="history-filters">
+                        <input type="date" id="historyStartDate"
+                               aria-label="Start date">
+                        <input type="date" id="historyEndDate"
+                               aria-label="End date">
+                        <button class="btn btn-secondary btn-sm"
+                                id="filterHistoryBtn" type="button">
+                            Apply
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Session</th>
+                                <th>Opened</th>
+                                <th>Closed</th>
+                                <th>Opening</th>
+                                <th>Closing</th>
+                                <th>Difference</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="registerHistoryBody">
+                            <tr>
+                                <td colspan="7" class="table-empty">
+                                    Register history will appear here.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Open register modal -->
+    <div class="modal-overlay" id="openRegisterModal" hidden>
+        <div class="register-modal" role="dialog"
+             aria-modal="true" aria-labelledby="openRegisterTitle">
+            <div class="modal-heading">
+                <div>
+                    <h2 id="openRegisterTitle">Open cash register</h2>
+                    <p>Enter the cash available at the beginning of this session.</p>
+                </div>
+                <button class="modal-close" type="button"
+                        data-close-modal="openRegisterModal"
+                        aria-label="Close">&times;</button>
+            </div>
+
+            <form id="openRegisterForm">
+                <div class="form-field">
+                    <label for="openingAmount">Opening balance (RWF)</label>
+                    <input type="number" id="openingAmount" name="opening_balance"
+                           min="0" step="1" required
+                           placeholder="Enter opening cash amount">
+                </div>
+
+                <div class="form-field">
+                    <label for="openingNotes">Notes (optional)</label>
+                    <textarea id="openingNotes" name="notes" rows="3"
+                              placeholder="Add a note about this session"></textarea>
+                </div>
+
+                <p class="form-message" id="openRegisterMessage"
+                   role="alert"></p>
+
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" type="button"
+                            data-close-modal="openRegisterModal">
+                        Cancel
+                    </button>
+                    <button class="btn btn-primary" type="submit"
+                            id="confirmOpenRegisterBtn">
+                        Open Register
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Close register modal -->
+    <div class="modal-overlay" id="closeRegisterModal" hidden>
+        <div class="register-modal" role="dialog"
+             aria-modal="true" aria-labelledby="closeRegisterTitle">
+            <div class="modal-heading">
+                <div>
+                    <h2 id="closeRegisterTitle">Close cash register</h2>
+                    <p>Enter the actual cash counted at the end of this session.</p>
+                </div>
+                <button class="modal-close" type="button"
+                        data-close-modal="closeRegisterModal"
+                        aria-label="Close">&times;</button>
+            </div>
+
+            <form id="closeRegisterForm">
+                <div class="form-field">
+                    <label for="closingAmount">Counted closing balance (RWF)</label>
+                    <input type="number" id="closingAmount" name="closing_balance"
+                           min="0" step="1" required
+                           placeholder="Enter counted cash amount">
+                </div>
+
+                <div class="form-field">
+                    <label for="closingNotes">Closing notes</label>
+                    <textarea id="closingNotes" name="notes" rows="3"
+                              placeholder="Explain any differences or add notes"></textarea>
+                </div>
+
+                <p class="form-message" id="closeRegisterMessage"
+                   role="alert"></p>
+
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" type="button"
+                            data-close-modal="closeRegisterModal">
+                        Cancel
+                    </button>
+                    <button class="btn btn-danger" type="submit"
+                            id="confirmCloseRegisterBtn">
+                        Confirm Closing
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/cash-register.js"></script>
+</body>
+</html>

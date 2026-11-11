@@ -459,3 +459,189 @@
         animation-duration: .01ms !important;
     }
 }
+
+/* =====================================================
+   SMARTBIZ CUSTOMER DETAILS - FINAL RESPONSIVE STYLES
+   ===================================================== */
+
+.customer-details-message {
+    padding: 12px 16px;
+    margin: 14px 0;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.customer-details-message.error {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.customer-details-message.success {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.customer-details-message[hidden] {
+    display: none;
+}
+
+.customer-details-page {
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+}
+
+.customer-details-page *,
+.customer-details-page *::before,
+.customer-details-page *::after {
+    box-sizing: border-box;
+}
+
+/* Customer information */
+.customer-profile,
+.customer-profile-card {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+}
+
+.customer-profile-card {
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, .04);
+}
+
+.customer-profile-card p {
+    margin: 5px 0;
+    overflow-wrap: anywhere;
+}
+
+/* Financial summary */
+.customer-financial-summary {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.customer-financial-summary > div {
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.customer-financial-summary h3 {
+    margin: 0 0 10px;
+    color: #64748b;
+    font-size: 14px;
+    font-weight: 500;
+}
+
+.customer-financial-summary strong {
+    font-size: 23px;
+    color: #124b35;
+}
+
+/* History tables */
+.customer-history-section {
+    margin-top: 26px;
+    padding: 20px;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    background: #fff;
+}
+
+.customer-history-section h2 {
+    margin: 0 0 18px;
+}
+
+.customer-history-section .table-responsive {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.customer-history-section table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.customer-history-section th,
+.customer-history-section td {
+    padding: 13px 12px;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+    white-space: nowrap;
+}
+
+.customer-history-section th {
+    background: #f8fafc;
+    color: #475569;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.customer-history-section td {
+    font-size: 13px;
+    color: #334155;
+}
+
+.customer-history-section tr:hover td {
+    background: #f8fafc;
+}
+
+.customer-history-section .empty-state {
+    padding: 24px;
+    text-align: center;
+    color: #64748b;
+}
+
+/* View sale link */
+.customer-history-section .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 33px;
+    padding: 6px 12px;
+    border: 1px solid #124b35;
+    border-radius: 7px;
+    color: #124b35;
+    background: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.customer-history-section .btn:hover {
+    background: #ecfdf5;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+    .customer-profile,
+    .customer-profile-card {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-history-section {
+        padding: 14px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .customer-financial-summary {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-financial-summary strong {
+        font-size: 20px;
+    }
+
+    .customer-history-section {
+        padding: 12px;
+    }
+}

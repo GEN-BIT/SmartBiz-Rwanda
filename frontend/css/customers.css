@@ -708,3 +708,273 @@
         width: 100%;
     }
 }
+
+/* =====================================================
+   SMARTBIZ CUSTOMERS - BUTTONS AND LAYOUT
+   ===================================================== */
+
+.customers-page,
+.customers-page * {
+    box-sizing: border-box;
+}
+
+/* Page heading */
+.customers-page-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+/* Main add customer button */
+#openCustomerModal {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;
+    min-height: 44px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    background: var(--sb-primary, #124b35);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#openCustomerModal:hover {
+    background: var(--sb-primary-hover, #0d3929);
+}
+
+/* Customer toolbar */
+.customer-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.customer-toolbar input,
+.customer-toolbar select {
+    min-height: 44px;
+    padding: 10px 13px;
+    border: 1px solid var(--sb-border, #dce4ee);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--sb-text, #26364a);
+    font: inherit;
+}
+
+#customerSearch {
+    flex: 1;
+    min-width: 180px;
+}
+
+#customerStatusFilter {
+    min-width: 150px;
+}
+
+#customerSearchButton {
+    min-height: 44px;
+    padding: 10px 17px;
+}
+
+/* Shared customer buttons */
+.customers-page .btn,
+#customerModal .btn {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    gap: 7px;
+    min-height: 38px;
+    padding: 8px 14px;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.customers-page .btn-primary,
+#saveCustomerButton {
+    background: var(--sb-primary, #124b35);
+    color: #fff;
+}
+
+.customers-page .btn-primary:hover,
+#saveCustomerButton:hover {
+    background: var(--sb-primary-hover, #0d3929);
+}
+
+.customers-page .btn-secondary,
+#cancelCustomerModal,
+#closeCustomerModal {
+    background: #f1f5f9;
+    color: #26364a;
+    border: 1px solid #dce4ee;
+}
+
+.customers-page .btn-danger {
+    background: #fee2e2;
+    color: #b91c1c;
+    border-color: #fecaca;
+}
+
+.customers-page .btn-success {
+    background: #15803d;
+    color: #fff;
+}
+
+/* Customer table actions */
+.customer-table .btn,
+.customer-table button {
+    min-height: 33px;
+    padding: 6px 11px;
+    border-radius: 7px;
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.customer-table .customer-actions,
+.customer-table .table-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+/* Table scrolling */
+.customer-table {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.customer-table table {
+    width: 100%;
+    min-width: 750px;
+}
+
+/* Pagination */
+.customer-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 18px;
+}
+
+#customerPreviousPage,
+#customerNextPage {
+    min-width: 95px;
+    min-height: 38px;
+    padding: 8px 14px;
+    border: 1px solid #dce4ee;
+    border-radius: 8px;
+    background: #fff;
+    color: #124b35;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+#customerPreviousPage:disabled,
+#customerNextPage:disabled {
+    opacity: .45;
+    cursor: not-allowed;
+}
+
+/* Customer modal */
+.customer-modal {
+    width: min(560px, calc(100% - 30px));
+    max-width: 100%;
+    border-radius: 14px;
+}
+
+.customer-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 16px;
+}
+
+.customer-form-grid input,
+.customer-form-grid select,
+.customer-form-grid textarea {
+    width: 100%;
+    min-width: 0;
+}
+
+#customerModal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+#customerModal button:disabled,
+.customers-page button:disabled {
+    opacity: .5;
+    cursor: not-allowed;
+}
+
+/* Tablet */
+@media (max-width: 768px) {
+    .customers-page-heading {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    #openCustomerModal {
+        width: 100%;
+    }
+
+    .customer-toolbar {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    #customerSearch,
+    #customerStatusFilter,
+    #customerSearchButton {
+        width: 100%;
+    }
+}
+
+/* Mobile */
+@media (max-width: 480px) {
+    .customer-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .customer-pagination {
+        justify-content: center;
+    }
+
+    .customer-table .customer-actions,
+    .customer-table .table-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .customer-table .customer-actions button,
+    .customer-table .table-actions button {
+        width: 100%;
+    }
+
+    #customerModal .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    #customerModal .modal-actions button {
+        width: 100%;
+    }
+}
