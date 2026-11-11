@@ -1,0 +1,132 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#15803d">
+    <title>Purchase Details | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/purchases.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div class="app-layout">
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+        <div id="sidebarMount"></div>
+
+        <main class="app-main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn"
+                        type="button" aria-label="Open navigation menu">☰</button>
+                    <div>
+                        <p class="topbar-eyebrow">Inventory and procurement</p>
+                        <h1 class="topbar-title">Purchase details</h1>
+                    </div>
+                </div>
+                <div class="topbar-user">
+                    <div class="topbar-user-info">
+                        <span id="currentUserName">User</span>
+                        <small id="currentUserRole">Team member</small>
+                    </div>
+                    <div class="topbar-avatar" id="currentUserAvatar">U</div>
+                </div>
+            </header>
+
+            <section class="purchases-page purchase-details-page">
+                <div class="purchase-details-heading">
+                    <div>
+                        <a href="purchases.html" class="purchase-back-link">← Back to purchases</a>
+                        <p class="page-kicker">Purchase record</p>
+                        <h2 id="purchaseNumberHeading">Loading purchase...</h2>
+                        <p class="page-description" id="purchaseCreatedDate">Please wait...</p>
+                    </div>
+                    <div class="purchase-details-actions">
+                        <span id="purchaseStatusBadge" class="purchase-status pending">Pending</span>
+                        <button id="receivePurchaseBtn" class="primary-btn" type="button" hidden>
+                            Receive purchase
+                        </button>
+                    </div>
+                </div>
+
+                <div id="purchaseDetailsMessage" class="purchase-message" role="status" hidden></div>
+
+                <div class="purchase-details-grid">
+                    <section class="purchase-detail-card">
+                        <div class="detail-card-heading"><h3>Supplier information</h3></div>
+                        <div class="supplier-detail-content">
+                            <strong id="detailSupplierName">—</strong>
+                            <span id="detailSupplierContact">—</span>
+                            <span id="detailSupplierPhone">—</span>
+                            <span id="detailSupplierEmail">—</span>
+                        </div>
+                    </section>
+
+                    <section class="purchase-detail-card">
+                        <div class="detail-card-heading"><h3>Purchase information</h3></div>
+                        <div class="purchase-info-list">
+                            <div><span>Purchase number</span><strong id="detailPurchaseNumber">—</strong></div>
+                            <div><span>Created on</span><strong id="detailPurchaseDate">—</strong></div>
+                            <div><span>Purchase status</span><strong id="detailPurchaseStatus">—</strong></div>
+                            <div><span>Payment status</span><strong id="detailPaymentStatus">—</strong></div>
+                        </div>
+                    </section>
+                </div>
+
+                <section class="purchase-detail-card purchase-items-card">
+                    <div class="detail-card-heading">
+                        <div>
+                            <h3>Purchased items</h3>
+                            <p>Products and quantities recorded in this purchase.</p>
+                        </div>
+                    </div>
+                    <div class="purchase-table-wrap">
+                        <table class="purchase-table">
+                            <thead>
+                                <tr>
+                                    <th>Product</th>
+                                    <th>SKU</th>
+                                    <th>Quantity</th>
+                                    <th>Unit cost</th>
+                                    <th>Subtotal</th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchaseDetailItems">
+                                <tr><td colspan="5" class="table-empty">Loading items...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <section class="purchase-detail-card purchase-summary-card">
+                    <div class="detail-card-heading"><h3>Payment summary</h3></div>
+                    <div class="purchase-detail-totals">
+                        <div><span>Subtotal</span><strong id="detailSubtotal">RWF 0</strong></div>
+                        <div><span>Tax</span><strong id="detailTax">RWF 0</strong></div>
+                        <div class="detail-total"><span>Total amount</span><strong id="detailTotal">RWF 0</strong></div>
+                        <div><span>Amount paid</span><strong id="detailAmountPaid">RWF 0</strong></div>
+                        <div class="detail-balance"><span>Balance due</span><strong id="detailBalance">RWF 0</strong></div>
+                    </div>
+                    <p class="purchase-payment-note">
+                        Payment information reflects the aggregate amount recorded on this purchase.
+                    </p>
+                </section>
+
+                <section class="purchase-detail-card purchase-notes-card" id="purchaseNotesCard" hidden>
+                    <div class="detail-card-heading"><h3>Notes</h3></div>
+                    <p id="detailPurchaseNotes"></p>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/services/purchase.service.js"></script>
+    <script src="js/pages/purchase-details.js"></script>
+</body>
+</html>

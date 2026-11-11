@@ -1,0 +1,209 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#15803d">
+    <title>Purchases | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/purchases.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div class="app-layout">
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+        <div id="sidebarMount"></div>
+
+        <main class="app-main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn"
+                        type="button" aria-label="Open navigation menu">☰</button>
+                    <div>
+                        <p class="topbar-eyebrow">Inventory and procurement</p>
+                        <h1 class="topbar-title">Purchases</h1>
+                    </div>
+                </div>
+                <div class="topbar-user">
+                    <div class="topbar-user-info">
+                        <span id="currentUserName">User</span>
+                        <small id="currentUserRole">Team member</small>
+                    </div>
+                    <div class="topbar-avatar" id="currentUserAvatar">U</div>
+                </div>
+            </header>
+
+            <section class="purchases-page">
+                <div class="page-heading">
+                    <div>
+                        <p class="page-kicker">Procurement management</p>
+                        <h2>Purchase orders</h2>
+                        <p class="page-description">
+                            Record supplier purchases, monitor balances, and receive incoming stock.
+                        </p>
+                    </div>
+                    <button class="primary-btn" id="newPurchaseBtn" type="button">
+                        <span>＋</span> New purchase
+                    </button>
+                </div>
+
+                <div class="purchase-summary">
+                    <article class="purchase-stat-card">
+                        <div class="purchase-stat-icon green">▤</div>
+                        <div><span>Total purchases</span><strong id="totalPurchases">0</strong></div>
+                    </article>
+                    <article class="purchase-stat-card">
+                        <div class="purchase-stat-icon orange">◷</div>
+                        <div><span>Pending receipt</span><strong id="pendingPurchases">0</strong></div>
+                    </article>
+                    <article class="purchase-stat-card">
+                        <div class="purchase-stat-icon blue">✓</div>
+                        <div><span>Received</span><strong id="receivedPurchases">0</strong></div>
+                    </article>
+                    <article class="purchase-stat-card">
+                        <div class="purchase-stat-icon red">₣</div>
+                        <div><span>Outstanding balance</span><strong id="purchaseOutstanding">RWF 0</strong></div>
+                    </article>
+                </div>
+
+                <section class="purchase-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Purchase records</h3>
+                            <p>Review purchases and their receiving status.</p>
+                        </div>
+                        <a href="suppliers.html" class="secondary-btn">Manage suppliers <span>→</span></a>
+                    </div>
+
+                    <div class="purchase-toolbar">
+                        <div class="purchase-search">
+                            <span>⌕</span>
+                            <input id="purchaseSearch" type="search"
+                                placeholder="Search purchase number or supplier...">
+                        </div>
+                        <select id="purchaseStatusFilter" aria-label="Purchase status">
+                            <option value="">All purchase statuses</option>
+                            <option value="pending">Pending</option>
+                            <option value="received">Received</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                        <select id="purchasePaymentFilter" aria-label="Payment status">
+                            <option value="">All payment statuses</option>
+                            <option value="unpaid">Unpaid</option>
+                            <option value="partial">Partially paid</option>
+                            <option value="paid">Paid</option>
+                        </select>
+                    </div>
+
+                    <div id="purchaseMessage" class="purchase-message" role="status" hidden></div>
+
+                    <div class="purchase-table-wrap">
+                        <table class="purchase-table">
+                            <thead>
+                                <tr>
+                                    <th>Purchase</th>
+                                    <th>Supplier</th>
+                                    <th>Date</th>
+                                    <th>Total amount</th>
+                                    <th>Paid</th>
+                                    <th>Balance due</th>
+                                    <th>Payment</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="purchaseTableBody">
+                                <tr><td colspan="9" class="table-empty">Loading purchases...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="purchase-table-footer">
+                        <span id="purchasePaginationInfo">Showing 0 purchases</span>
+                        <div class="pagination-controls">
+                            <button id="purchasePrevPage" class="pagination-btn" type="button">Previous</button>
+                            <span id="purchasePageNumber">Page 1</span>
+                            <button id="purchaseNextPage" class="pagination-btn" type="button">Next</button>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <div class="purchase-modal-backdrop" id="purchaseModal" hidden>
+        <section class="purchase-modal" role="dialog" aria-modal="true"
+            aria-labelledby="purchaseModalTitle">
+            <div class="modal-heading">
+                <div>
+                    <p class="page-kicker">Supplier procurement</p>
+                    <h2 id="purchaseModalTitle">Create purchase</h2>
+                    <p>The purchase remains pending until the goods are received.</p>
+                </div>
+                <button class="modal-close-btn" id="closePurchaseModal"
+                    type="button" aria-label="Close dialog">×</button>
+            </div>
+
+            <form id="purchaseForm">
+                <div class="purchase-form-grid">
+                    <label class="form-field full-field">
+                        Supplier <span>*</span>
+                        <select id="purchaseSupplier" required>
+                            <option value="">Select supplier</option>
+                        </select>
+                    </label>
+                    <label class="form-field">
+                        Tax amount (RWF)
+                        <input type="number" id="purchaseTax" min="0" step="0.01" value="0">
+                    </label>
+                    <label class="form-field">
+                        Amount paid (RWF)
+                        <input type="number" id="purchaseAmountPaid" min="0" step="0.01" value="0">
+                    </label>
+                </div>
+
+                <div class="purchase-items-heading">
+                    <div>
+                        <h3>Purchase items</h3>
+                        <p>Add the products and quantities ordered.</p>
+                    </div>
+                    <button class="secondary-btn" type="button" id="addPurchaseItemBtn">＋ Add item</button>
+                </div>
+
+                <div id="purchaseItemsContainer" class="purchase-items-container"></div>
+
+                <div class="purchase-totals">
+                    <div><span>Subtotal</span><strong id="purchaseSubtotal">RWF 0</strong></div>
+                    <div><span>Tax</span><strong id="purchaseTaxDisplay">RWF 0</strong></div>
+                    <div class="purchase-grand-total"><span>Total</span><strong id="purchaseTotal">RWF 0</strong></div>
+                    <div><span>Balance due</span><strong id="purchaseBalance">RWF 0</strong></div>
+                </div>
+
+                <label class="form-field purchase-notes-field">
+                    Notes
+                    <textarea id="purchaseNotes" rows="2" maxlength="255"
+                        placeholder="Optional purchase notes"></textarea>
+                </label>
+
+                <div id="purchaseFormMessage" class="modal-form-message" role="alert" hidden></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" id="cancelPurchaseBtn">Cancel</button>
+                    <button type="submit" class="primary-btn" id="savePurchaseBtn">Create purchase</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/services/supplier.service.js"></script>
+    <script src="js/services/product.service.js"></script>
+    <script src="js/services/purchase.service.js"></script>
+    <script src="js/pages/purchases.js"></script>
+</body>
+</html>

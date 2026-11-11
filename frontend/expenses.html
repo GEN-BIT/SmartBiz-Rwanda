@@ -1,0 +1,355 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Expenses | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/expenses.css">
+</head>
+
+<body>
+
+    <div class="app-container">
+
+        <!-- Sidebar -->
+        <aside id="sidebar-container"></aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+
+            <!-- Page Header -->
+            <header class="page-header">
+                <div>
+                    <h1>Expenses</h1>
+                    <p>Manage and track your business expenses.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="add-expense-btn"
+                >
+                    + Add Expense
+                </button>
+            </header>
+
+            <!-- Expense Summary -->
+            <section class="expense-summary">
+
+                <article class="expense-summary-card">
+                    <div class="summary-icon">RWF</div>
+                    <div>
+                        <p>Total Expenses</p>
+                        <h2 id="total-expenses">RWF 0</h2>
+                    </div>
+                </article>
+
+                <article class="expense-summary-card">
+                    <div class="summary-icon">#</div>
+                    <div>
+                        <p>Number of Expenses</p>
+                        <h2 id="expense-count">0</h2>
+                    </div>
+                </article>
+
+                <article class="expense-summary-card">
+                    <div class="summary-icon">AVG</div>
+                    <div>
+                        <p>Average Expense</p>
+                        <h2 id="average-expense">RWF 0</h2>
+                    </div>
+                </article>
+
+            </section>
+
+            <!-- Expense Filters -->
+            <section class="expense-filters">
+
+                <div class="filter-search">
+                    <input
+                        type="search"
+                        id="expense-search"
+                        placeholder="Search expenses..."
+                    >
+                </div>
+
+                <div class="filter-group">
+                    <label for="expense-category-filter">
+                        Category
+                    </label>
+
+                    <select id="expense-category-filter">
+                        <option value="">All Categories</option>
+                        <option value="Rent">Rent</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Salaries">Salaries</option>
+                        <option value="Supplies">Supplies</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="filter-group">
+                    <label for="expense-date-filter">
+                        Date
+                    </label>
+
+                    <input
+                        type="date"
+                        id="expense-date-filter"
+                    >
+                </div>
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    id="reset-expense-filters"
+                >
+                    Reset
+                </button>
+
+            </section>
+
+            <!-- Expenses Table -->
+            <section class="expense-table-section">
+
+                <div class="section-heading">
+                    <div>
+                        <h2>Expense Records</h2>
+                        <p>Review your recorded business expenses.</p>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+
+                    <table class="expense-table">
+
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Category</th>
+                                <th>Description</th>
+                                <th>Payment Method</th>
+                                <th>Receipt Number</th>
+                                <th>Amount</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="expenses-table-body">
+                            <tr>
+                                <td colspan="7" class="table-message">
+                                    Loading expenses...
+                                </td>
+                            </tr>
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+                <div class="expense-pagination">
+                    <p id="expense-pagination-info">
+                        Showing 0 expenses
+                    </p>
+
+                    <div>
+                        <button
+                            type="button"
+                            id="expense-prev-page"
+                            disabled
+                        >
+                            Previous
+                        </button>
+
+                        <button
+                            type="button"
+                            id="expense-next-page"
+                            disabled
+                        >
+                            Next
+                        </button>
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+
+    </div>
+
+    <!-- Add/Edit Expense Modal -->
+    <div class="modal-overlay" id="expense-modal">
+
+        <div class="modal-content">
+
+            <div class="modal-header">
+                <div>
+                    <h2 id="expense-modal-title">Add Expense</h2>
+                    <p>Enter the expense information below.</p>
+                </div>
+
+                <button
+                    type="button"
+                    class="modal-close"
+                    id="close-expense-modal"
+                    aria-label="Close"
+                >
+                    &times;
+                </button>
+            </div>
+
+            <form id="expense-form">
+
+                <input
+                    type="hidden"
+                    id="expense-id"
+                >
+
+                <div class="form-group">
+                    <label for="expense-category">
+                        Expense Category
+                    </label>
+
+                    <select id="expense-category" required>
+                        <option value="">Select category</option>
+                        <option value="Rent">Rent</option>
+                        <option value="Utilities">Utilities</option>
+                        <option value="Transport">Transport</option>
+                        <option value="Salaries">Salaries</option>
+                        <option value="Supplies">Supplies</option>
+                        <option value="Maintenance">Maintenance</option>
+                        <option value="Marketing">Marketing</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="expense-description">
+                        Description
+                    </label>
+
+                    <textarea
+                        id="expense-description"
+                        rows="3"
+                        maxlength="255"
+                        placeholder="Describe the expense"
+                        required
+                    ></textarea>
+                </div>
+
+                <div class="form-row">
+
+                    <div class="form-group">
+                        <label for="expense-amount">
+                            Amount (RWF)
+                        </label>
+
+                        <input
+                            type="number"
+                            id="expense-amount"
+                            min="1"
+                            step="0.01"
+                            placeholder="Enter amount"
+                            required
+                        >
+                    </div>
+
+                    <div class="form-group">
+                        <label for="expense-date">
+                            Expense Date
+                        </label>
+
+                        <input
+                            type="date"
+                            id="expense-date"
+                            required
+                        >
+                    </div>
+
+                </div>
+
+                <div class="form-group">
+                    <label for="expense-payment-method">
+                        Payment Method
+                    </label>
+
+                    <select
+                        id="expense-payment-method"
+                        required
+                    >
+                        <option value="">Select payment method</option>
+                        <option value="cash">Cash</option>
+                        <option value="mobile_money">Mobile Money</option>
+                        <option value="bank_transfer">Bank Transfer</option>
+                        <option value="card">Card</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="expense-receipt">
+                        Receipt Number
+                    </label>
+
+                    <input
+                        type="text"
+                        id="expense-receipt"
+                        maxlength="100"
+                        placeholder="Optional receipt number"
+                    >
+                </div>
+
+                <div
+                    class="expense-form-message"
+                    id="expense-form-message"
+                    role="alert"
+                ></div>
+
+                <div class="modal-actions">
+
+                    <button
+                        type="button"
+                        class="btn btn-secondary"
+                        id="cancel-expense-btn"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        type="submit"
+                        class="btn btn-primary"
+                        id="save-expense-btn"
+                    >
+                        Save Expense
+                    </button>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+    <!-- Shared JavaScript -->
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+
+    <!-- Expense JavaScript -->
+    <script src="js/services/expense.service.js"></script>
+    <script src="js/pages/expenses.js"></script>
+
+</body>
+</html>

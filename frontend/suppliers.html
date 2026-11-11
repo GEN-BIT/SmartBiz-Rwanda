@@ -1,0 +1,193 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#15803d">
+    <title>Suppliers | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/suppliers.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+    <div class="app-layout">
+        <div id="sidebarOverlay" class="sidebar-overlay"></div>
+        <div id="sidebarMount"></div>
+
+        <main class="app-main">
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button class="mobile-menu-btn" id="mobileMenuBtn" type="button"
+                        aria-label="Open navigation menu">☰</button>
+                    <div>
+                        <p class="topbar-eyebrow">Business management</p>
+                        <h1 class="topbar-title">Suppliers</h1>
+                    </div>
+                </div>
+                <div class="topbar-user">
+                    <div class="topbar-user-info">
+                        <span id="currentUserName">User</span>
+                        <small id="currentUserRole">Team member</small>
+                    </div>
+                    <div class="topbar-avatar" id="currentUserAvatar">U</div>
+                </div>
+            </header>
+
+            <section class="suppliers-page">
+                <div class="page-heading">
+                    <div>
+                        <p class="page-kicker">Purchasing and supply chain</p>
+                        <h2>Manage your suppliers</h2>
+                        <p class="page-description">
+                            Keep supplier contacts organised and track the suppliers
+                            connected to your purchases.
+                        </p>
+                    </div>
+                    <button class="primary-btn" id="addSupplierBtn" type="button">
+                        <span>＋</span> Add supplier
+                    </button>
+                </div>
+
+                <div class="supplier-summary">
+                    <article class="supplier-stat-card">
+                        <div class="stat-icon stat-icon-green">▣</div>
+                        <div>
+                            <span>Total suppliers</span>
+                            <strong id="totalSuppliers">0</strong>
+                        </div>
+                    </article>
+                    <article class="supplier-stat-card">
+                        <div class="stat-icon stat-icon-blue">✓</div>
+                        <div>
+                            <span>Active suppliers</span>
+                            <strong id="activeSuppliers">0</strong>
+                        </div>
+                    </article>
+                    <article class="supplier-stat-card">
+                        <div class="stat-icon stat-icon-orange">Ⅱ</div>
+                        <div>
+                            <span>Inactive suppliers</span>
+                            <strong id="inactiveSuppliers">0</strong>
+                        </div>
+                    </article>
+                </div>
+
+                <section class="supplier-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Supplier directory</h3>
+                            <p>Search and manage your business suppliers.</p>
+                        </div>
+                        <a class="secondary-btn" href="purchases.html">View purchases <span>→</span></a>
+                    </div>
+
+                    <div class="supplier-toolbar">
+                        <div class="supplier-search">
+                            <span aria-hidden="true">⌕</span>
+                            <input id="supplierSearch" type="search"
+                                placeholder="Search supplier name, phone or email..."
+                                autocomplete="off">
+                        </div>
+                        <select id="supplierStatusFilter" aria-label="Filter supplier status">
+                            <option value="">All statuses</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div id="supplierMessage" class="supplier-message" role="status" hidden></div>
+
+                    <div class="supplier-table-wrap">
+                        <table class="supplier-table">
+                            <thead>
+                                <tr>
+                                    <th>Supplier</th>
+                                    <th>Contact person</th>
+                                    <th>Phone</th>
+                                    <th>Email</th>
+                                    <th>Status</th>
+                                    <th>Added</th>
+                                    <th class="action-heading">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="supplierTableBody">
+                                <tr><td colspan="7" class="table-empty">Loading suppliers...</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="supplier-table-footer">
+                        <span id="supplierPaginationInfo">Showing 0 suppliers</span>
+                        <div class="pagination-controls">
+                            <button id="supplierPrevPage" type="button" class="pagination-btn">Previous</button>
+                            <span id="supplierPageNumber">Page 1</span>
+                            <button id="supplierNextPage" type="button" class="pagination-btn">Next</button>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <div class="supplier-modal-backdrop" id="supplierModal" hidden>
+        <section class="supplier-modal" role="dialog" aria-modal="true"
+            aria-labelledby="supplierModalTitle">
+            <div class="modal-heading">
+                <div>
+                    <p class="page-kicker">Supplier information</p>
+                    <h2 id="supplierModalTitle">Add supplier</h2>
+                    <p>Enter the supplier's business and contact details.</p>
+                </div>
+                <button class="modal-close-btn" id="closeSupplierModal"
+                    type="button" aria-label="Close dialog">×</button>
+            </div>
+
+            <form id="supplierForm">
+                <div class="supplier-form-grid">
+                    <label class="form-field full-field">
+                        Supplier name <span>*</span>
+                        <input type="text" id="supplierName" maxlength="150"
+                            placeholder="Enter supplier or company name" required>
+                    </label>
+                    <label class="form-field">
+                        Contact person
+                        <input type="text" id="supplierContact" maxlength="150"
+                            placeholder="Contact person's name">
+                    </label>
+                    <label class="form-field">
+                        Phone number
+                        <input type="tel" id="supplierPhone" maxlength="20"
+                            placeholder="+250...">
+                    </label>
+                    <label class="form-field full-field">
+                        Email address
+                        <input type="email" id="supplierEmail" maxlength="150"
+                            placeholder="supplier@example.com">
+                    </label>
+                    <label class="form-field full-field">
+                        Address
+                        <textarea id="supplierAddress" maxlength="255" rows="3"
+                            placeholder="Supplier location or address"></textarea>
+                    </label>
+                </div>
+
+                <div class="modal-form-message" id="supplierFormMessage" role="alert" hidden></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="secondary-btn" id="cancelSupplierBtn">Cancel</button>
+                    <button type="submit" class="primary-btn" id="saveSupplierBtn">Save supplier</button>
+                </div>
+            </form>
+        </section>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/services/supplier.service.js"></script>
+    <script src="js/pages/suppliers.js"></script>
+</body>
+</html>
