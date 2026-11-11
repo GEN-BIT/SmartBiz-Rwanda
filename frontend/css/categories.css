@@ -1,0 +1,346 @@
+
+/* =========================================
+   SMARTBIZ RWANDA - CATEGORIES PAGE
+========================================= */
+
+.category-toolbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 24px;
+}
+
+.category-toolbar h2 {
+    margin: 0 0 6px;
+    font-size: 21px;
+    font-weight: 700;
+}
+
+.category-toolbar p {
+    margin: 0;
+    color: var(--text-secondary, #64748b);
+    font-size: 14px;
+}
+
+.category-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 24px;
+}
+
+.category-stat-card {
+    min-width: 0;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+}
+
+.category-stat-card span {
+    color: var(--text-secondary, #64748b);
+    font-size: 14px;
+}
+
+.category-stat-card strong {
+    color: var(--text-primary, #172033);
+    font-size: 28px;
+    font-weight: 700;
+}
+
+.category-panel {
+    min-width: 0;
+    padding: 20px;
+    background: var(--surface, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
+    border-radius: 12px;
+}
+
+.category-filters {
+    display: flex;
+    gap: 12px;
+    margin-bottom: 18px;
+}
+
+.category-filters input,
+.category-filters select {
+    min-height: 42px;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color, #dbe2ea);
+    border-radius: 8px;
+    background: var(--surface, #ffffff);
+    color: var(--text-primary, #172033);
+    font: inherit;
+}
+
+.category-filters input {
+    flex: 1;
+    min-width: 0;
+}
+
+.category-filters select {
+    min-width: 170px;
+}
+
+.category-message {
+    margin-bottom: 12px;
+    font-size: 13px;
+}
+
+.category-message:empty {
+    display: none;
+}
+
+.category-message.success {
+    color: #15803d;
+}
+
+.category-message.error {
+    color: #dc2626;
+}
+
+.category-message.info {
+    color: #2563eb;
+}
+
+.category-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.category-status.active {
+    background: #dcfce7;
+    color: #166534;
+}
+
+.category-status.inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.category-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.category-actions button {
+    padding: 7px 10px;
+    border: 0;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.category-edit-btn {
+    background: #e0edff;
+    color: #1d4ed8;
+}
+
+.category-status-btn {
+    background: #f1f5f9;
+    color: #334155;
+}
+
+/* Category modal */
+
+#categoryModal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    overflow-y: auto;
+    background: rgba(15, 23, 42, 0.55);
+}
+
+#categoryModal.active {
+    display: flex;
+}
+
+#categoryModal .modal {
+    width: 100%;
+    max-width: 500px;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    padding: 24px;
+    background: var(--surface, #ffffff);
+    border-radius: 14px;
+}
+
+#categoryModal .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 22px;
+}
+
+#categoryModal .modal-header h2 {
+    margin: 0;
+    font-size: 20px;
+}
+
+#categoryModal .modal-close {
+    border: 0;
+    background: transparent;
+    font-size: 27px;
+    cursor: pointer;
+    color: var(--text-secondary, #64748b);
+}
+
+#categoryModal .form-group {
+    margin-bottom: 17px;
+}
+
+#categoryModal .form-group label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+#categoryModal .form-group input,
+#categoryModal .form-group textarea {
+    box-sizing: border-box;
+    width: 100%;
+    padding: 11px 12px;
+    border: 1px solid var(--border-color, #dbe2ea);
+    border-radius: 8px;
+    font: inherit;
+}
+
+#categoryModal .form-group textarea {
+    resize: vertical;
+}
+
+#categoryModal .modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 22px;
+}
+
+/* Tablet */
+
+@media (max-width: 768px) {
+    .category-toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .category-stats {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .category-panel {
+        padding: 14px;
+    }
+}
+
+/* Mobile */
+
+@media (max-width: 480px) {
+    .category-stats {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .category-stat-card {
+        padding: 16px;
+    }
+
+    .category-filters {
+        flex-direction: column;
+    }
+
+    .category-filters select {
+        width: 100%;
+    }
+
+    #categoryModal {
+        padding: 12px;
+    }
+
+    #categoryModal .modal {
+        padding: 18px;
+    }
+
+    #categoryModal .modal-actions {
+        flex-direction: column-reverse;
+    }
+
+    #categoryModal .modal-actions button {
+        width: 100%;
+    }
+}
+
+/* Categories table and pagination responsiveness */
+
+.categories-table-wrap {
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+.categories-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+}
+
+.categories-table th,
+.categories-table td {
+    padding: 13px 12px;
+    text-align: left;
+    vertical-align: middle;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+}
+
+.categories-pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    padding-top: 18px;
+    color: var(--text-secondary, #64748b);
+    font-size: 13px;
+}
+
+.categories-pagination > div {
+    display: flex;
+    gap: 8px;
+}
+
+.categories-pagination button {
+    min-height: 36px;
+}
+
+@media (max-width: 480px) {
+    .categories-pagination {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .categories-pagination > div {
+        width: 100%;
+    }
+
+    .categories-pagination button {
+        flex: 1;
+    }
+}

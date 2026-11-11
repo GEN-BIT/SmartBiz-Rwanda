@@ -1,31 +1,64 @@
 
-/* =========================================================
-   SMARTBIZ RWANDA - EXPENSE PAGE
-   ========================================================= */
+/*
+ * SmartBiz Rwanda
+ * Expenses Page
+ *
+ * Expense listing, filtering, summary, pagination,
+ * adding and editing expenses.
+ */
 
 document.addEventListener("DOMContentLoaded", function () {
     "use strict";
 
     const token = sessionStorage.getItem("smartbiz_token");
+    const savedMembership = sessionStorage.getItem("smartbiz_membership");
 
-    let membership = {};
+    let membership;
 
-    try {
-        membership = JSON.parse(
-            sessionStorage.getItem("smartbiz_membership") || "{}"
-        );
-    } catch (error) {
-        membership = {};
-    }
-
-    if (!token || !membership.business_id) {
-        window.location.href = "login.html";
+    if (!token || !savedMembership) {
+        window.location.replace("login.html");
         return;
     }
 
-    const userRole = membership.role;
-    const canManageExpenses =
-        userRole === "owner" || userRole === "manager";
+    try {
+        membership = JSON.parse(savedMembership);
+    } catch (error) {
+        sessionStorage.removeItem("smartbiz_token");
+        sessionStorage.removeItem("smartbiz_membership");
+        window.location.replace("login.html");
+        return;
+    }
+
+    const businessId = membership.business_id;
+    const role = String(membership.role || "").toLowerCase();
+
+    if (
+        String(membership.business_status || "").toLowerCase() !== "active" ||
+        String(membership.membership_status || "").toLowerCase() !== "active"
+    ) {
+        window.location.replace("login.html");
+        return;
+    }
+
+    if (!businessId) {
+        showPageError("Your business information could not be found.");
+        return;
+    }
+
+    if (!["owner", "manager"].includes(role)) {
+        showPageError(
+            "You do not have permission to manage business expenses."
+        );
+        return;
+    }
+
+    if (!window.expenseService) {
+        showPageError(
+            "The Expense API service has not loaded. Check the script paths in expenses.html."
+        );
+        console.error("window.expenseService is undefined.");
+        return;
+    }
 
     if (typeof window.renderSidebar === "function") {
         window.renderSidebar(membership);
@@ -35,19 +68,17 @@ document.addEventListener("DOMContentLoaded", function () {
         total: document.getElementById("total-expenses"),
         count: document.getElementById("expense-count"),
         average: document.getElementById("average-expense"),
-
         table: document.getElementById("expenses-table-body"),
-
         search: document.getElementById("expense-search"),
         categoryFilter: document.getElementById("expense-category-filter"),
         dateFilter: document.getElementById("expense-date-filter"),
         resetFilters: document.getElementById("reset-expense-filters"),
-
+        previous: document.getElementById("expense-prev-page"),
+        next: document.getElementById("expense-next-page"),
+        paginationInfo: document.getElementById("expense-pagination-info"),
         modal: document.getElementById("expense-modal"),
         modalTitle: document.getElementById("expense-modal-title"),
         form: document.getElementById("expense-form"),
-        formMessage: document.getElementById("expense-form-message"),
-
         expenseId: document.getElementById("expense-id"),
         category: document.getElementById("expense-category"),
         description: document.getElementById("expense-description"),
@@ -55,29 +86,32 @@ document.addEventListener("DOMContentLoaded", function () {
         date: document.getElementById("expense-date"),
         paymentMethod: document.getElementById("expense-payment-method"),
         receipt: document.getElementById("expense-receipt"),
-
-        addButton: document.getElementById("add-expense-btn"),
-        closeButton: document.getElementById("close-expense-modal"),
-        cancelButton: document.getElementById("cancel-expense-btn"),
+        message: document.getElementById("expense-form-message"),
         saveButton: document.getElementById("save-expense-btn"),
-
-        previousButton: document.getElementById("expense-prev-page"),
-        nextButton: document.getElementById("expense-next-page"),
-        paginationInfo: document.getElementById("expense-pagination-info")
+        addButton: document.getElementById("add-expense-btn")
     };
 
-    let allExpenses = [];
-    let filteredExpenses = [];
-    let currentPage = 1;
+    const state = {
+        page: 1,
+        limit: 20,
+        totalPages: 1,
+        search: "",
+        category: "",
+        date: ""
+    };
 
-    const pageSize = 10;
+    let searchTimer;
+
+    /* ---------------------------------------------
+       GENERAL HELPERS
+    --------------------------------------------- */
 
     function formatCurrency(value) {
         return new Intl.NumberFormat("en-RW", {
             style: "currency",
             currency: "RWF",
             maximumFractionDigits: 0
-        }).format(Number(value) || 0);
+        }).format(Number(value || 0));
     }
 
     function escapeHTML(value) {
@@ -94,285 +128,331 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    function getPayload(response) {
-        if (response && response.data !== undefined) {
-            return response.data;
-        }
+    function formatDate(value) {
+        if (!value) return "—";
 
-        return response;
+        const dateString = String(value).slice(0, 10);
+        const parts = dateString.split("-");
+
+        if (parts.length !== 3) return "—";
+
+        const date = new Date(
+            Number(parts[0]),
+            Number(parts[1]) - 1,
+            Number(parts[2])
+        );
+
+        if (Number.isNaN(date.getTime())) return "—";
+
+        return new Intl.DateTimeFormat("en-RW", {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+        }).format(date);
     }
 
-    function getExpenseArray(response) {
-        const data = getPayload(response);
+    function getToday() {
+        const now = new Date();
 
-        if (Array.isArray(data)) {
-            return data;
-        }
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
 
-        if (data && Array.isArray(data.expenses)) {
-            return data.expenses;
-        }
-
-        if (data && data.data && Array.isArray(data.data.expenses)) {
-            return data.data.expenses;
-        }
-
-        return [];
+        return `${year}-${month}-${day}`;
     }
 
-    function showTableMessage(message) {
+    function paymentMethodLabel(value) {
+        const labels = {
+            cash: "Cash",
+            mobile_money: "Mobile Money",
+            bank_transfer: "Bank Transfer",
+            card: "Card",
+            other: "Other"
+        };
+
+        return labels[value] || value || "—";
+    }
+
+    function getFilterParams() {
+        const params = {};
+
+        if (state.search) {
+            params.search = state.search;
+        }
+
+        if (state.category) {
+            params.category = state.category;
+        }
+
+        if (state.date) {
+            params.date_from = state.date;
+            params.date_to = state.date;
+        }
+
+        return params;
+    }
+
+    /* ---------------------------------------------
+       PAGE ERROR DISPLAY
+    --------------------------------------------- */
+
+    function showPageError(message) {
+        const table = document.getElementById("expenses-table-body");
+
+        if (table) {
+            table.innerHTML = `
+                <tr>
+                    <td colspan="7" class="table-message">
+                        ${escapeHTML(message)}
+                    </td>
+                </tr>
+            `;
+        }
+
+        const summaryIds = [
+            "total-expenses",
+            "expense-count",
+            "average-expense"
+        ];
+
+        summaryIds.forEach(function (id) {
+            const element = document.getElementById(id);
+
+            if (element) {
+                element.textContent = "—";
+            }
+        });
+
+        console.error(message);
+    }
+
+    /* ---------------------------------------------
+       LOAD EXPENSES AND SUMMARY
+    --------------------------------------------- */
+
+    async function loadExpenses() {
         elements.table.innerHTML = `
             <tr>
                 <td colspan="7" class="table-message">
-                    ${escapeHTML(message)}
+                    Loading expenses...
                 </td>
             </tr>
         `;
+
+        try {
+            const filters = getFilterParams();
+
+            const listParams = {
+                ...filters,
+                page: state.page,
+                limit: state.limit
+            };
+
+            const [expenseResult, summaryResult] = await Promise.all([
+                window.expenseService.getExpenses(
+                    businessId,
+                    listParams
+                ),
+
+                window.expenseService.getExpenseSummary(
+                    businessId,
+                    filters
+                )
+            ]);
+
+            renderExpenses(
+                expenseResult.data || [],
+                expenseResult.pagination || {}
+            );
+
+            renderSummary(summaryResult.data || {});
+
+        } catch (error) {
+            console.error("Expense loading error:", error);
+
+            elements.table.innerHTML = `
+                <tr>
+                    <td colspan="7" class="table-message">
+                        ${escapeHTML(
+                            error.message || "Unable to load expenses."
+                        )}
+                    </td>
+                </tr>
+            `;
+
+            elements.paginationInfo.textContent =
+                "Unable to load expense records.";
+        }
     }
 
-    function showFormMessage(message, type = "error") {
-        elements.formMessage.textContent = message;
-        elements.formMessage.className =
-            `expense-form-message ${type}`;
+    /* ---------------------------------------------
+       SUMMARY CARDS
+    --------------------------------------------- */
+
+    function renderSummary(data) {
+        const summary = data.summary || {};
+
+        const totalAmount = Number(summary.total_amount || 0);
+        const totalExpenses = Number(summary.total_expenses || 0);
+        const averageAmount = Number(summary.average_amount || 0);
+
+        elements.total.textContent = formatCurrency(totalAmount);
+        elements.count.textContent = totalExpenses.toLocaleString("en-RW");
+        elements.average.textContent = formatCurrency(averageAmount);
     }
 
-    function clearFormMessage() {
-        elements.formMessage.textContent = "";
-        elements.formMessage.className = "expense-form-message";
-    }
+    /* ---------------------------------------------
+       EXPENSE TABLE
+    --------------------------------------------- */
 
-    function getExpenseId(expense) {
-        return expense.expense_id || expense.id;
-    }
+    function renderExpenses(expenses, pagination) {
+        elements.table.replaceChildren();
 
-    function openModal(expense = null) {
-        if (!canManageExpenses) {
-            alert("You do not have permission to manage expenses.");
-            return;
+        if (!expenses.length) {
+            const row = document.createElement("tr");
+            const cell = document.createElement("td");
+
+            cell.colSpan = 7;
+            cell.className = "table-message";
+            cell.textContent = "No expenses found.";
+
+            row.appendChild(cell);
+            elements.table.appendChild(row);
+        } else {
+            expenses.forEach(function (expense) {
+                const row = document.createElement("tr");
+
+                row.innerHTML = `
+                    <td>${escapeHTML(formatDate(expense.expense_date))}</td>
+
+                    <td>${escapeHTML(expense.expense_category)}</td>
+
+                    <td>${escapeHTML(expense.description || "—")}</td>
+
+                    <td>
+                        <span class="expense-payment">
+                            ${escapeHTML(
+                                paymentMethodLabel(expense.payment_method)
+                            )}
+                        </span>
+                    </td>
+
+                    <td>${escapeHTML(expense.receipt_number || "—")}</td>
+
+                    <td class="expense-amount">
+                        ${escapeHTML(formatCurrency(expense.amount))}
+                    </td>
+
+                    <td>
+                        <div class="expense-actions">
+                            <button
+                                type="button"
+                                class="edit-expense"
+                                data-id="${escapeHTML(expense.expense_id)}"
+                            >
+                                Edit
+                            </button>
+                        </div>
+                    </td>
+                `;
+
+                elements.table.appendChild(row);
+            });
         }
 
+        state.totalPages = Math.max(
+            1,
+            Number(pagination.total_pages || 1)
+        );
+
+        const total = Number(pagination.total || 0);
+        const start = total === 0
+            ? 0
+            : ((state.page - 1) * state.limit) + 1;
+
+        const end = Math.min(state.page * state.limit, total);
+
+        elements.paginationInfo.textContent =
+            `Showing ${start}–${end} of ${total} expenses`;
+
+        elements.previous.disabled = state.page <= 1;
+        elements.next.disabled = state.page >= state.totalPages;
+    }
+
+    /* ---------------------------------------------
+       MODAL CONTROLS
+    --------------------------------------------- */
+
+    function openModal(expense = null) {
         elements.form.reset();
-        clearFormMessage();
+        elements.expenseId.value = "";
+        elements.message.textContent = "";
+        elements.message.classList.remove("visible");
 
         if (expense) {
             elements.modalTitle.textContent = "Edit Expense";
 
-            elements.expenseId.value = getExpenseId(expense) || "";
+            elements.expenseId.value = expense.expense_id;
             elements.category.value = expense.expense_category || "";
             elements.description.value = expense.description || "";
             elements.amount.value = expense.amount || "";
-            elements.date.value = expense.expense_date
-                ? String(expense.expense_date).substring(0, 10)
-                : "";
-            elements.paymentMethod.value = expense.payment_method || "";
+            elements.date.value = String(
+                expense.expense_date || ""
+            ).slice(0, 10);
+
+            elements.paymentMethod.value =
+                expense.payment_method || "cash";
+
             elements.receipt.value = expense.receipt_number || "";
 
             elements.saveButton.textContent = "Update Expense";
         } else {
             elements.modalTitle.textContent = "Add Expense";
-            elements.expenseId.value = "";
-
-            elements.date.value =
-                new Date().toISOString().split("T")[0];
-
+            elements.date.value = getToday();
+            elements.paymentMethod.value = "cash";
             elements.saveButton.textContent = "Save Expense";
         }
 
         elements.modal.classList.add("active");
+        document.body.style.overflow = "hidden";
+
+        elements.category.focus();
     }
 
     function closeModal() {
         elements.modal.classList.remove("active");
+        document.body.style.overflow = "";
         elements.form.reset();
-        clearFormMessage();
+        elements.message.textContent = "";
+        elements.message.classList.remove("visible");
     }
 
-    function updateSummary() {
-        const total = filteredExpenses.reduce(function (sum, expense) {
-            return sum + Number(expense.amount || 0);
-        }, 0);
-
-        const count = filteredExpenses.length;
-        const average = count > 0 ? total / count : 0;
-
-        elements.total.textContent = formatCurrency(total);
-        elements.count.textContent = count;
-        elements.average.textContent = formatCurrency(average);
+    function showFormMessage(message) {
+        elements.message.textContent = message;
+        elements.message.classList.add("visible");
     }
 
-    function renderExpenses() {
-        const start = (currentPage - 1) * pageSize;
-        const end = start + pageSize;
-
-        const pageExpenses = filteredExpenses.slice(start, end);
-
-        if (pageExpenses.length === 0) {
-            showTableMessage("No expenses found.");
-        } else {
-            elements.table.innerHTML = pageExpenses.map(function (expense) {
-                const id = getExpenseId(expense);
-
-                const date = expense.expense_date
-                    ? new Date(
-                        String(expense.expense_date).substring(0, 10) +
-                        "T00:00:00"
-                    ).toLocaleDateString()
-                    : "-";
-
-                const actions = canManageExpenses
-                    ? `
-                        <div class="expense-actions">
-                            <button
-                                type="button"
-                                class="edit-expense-btn"
-                                data-id="${escapeHTML(id)}"
-                            >
-                                Edit
-                            </button>
-                        </div>
-                    `
-                    : "-";
-
-                return `
-                    <tr>
-                        <td>${escapeHTML(date)}</td>
-                        <td>${escapeHTML(expense.expense_category || "-")}</td>
-                        <td>${escapeHTML(expense.description || "-")}</td>
-                        <td>${escapeHTML(
-                            String(expense.payment_method || "-")
-                                .replaceAll("_", " ")
-                        )}</td>
-                        <td>${escapeHTML(expense.receipt_number || "-")}</td>
-                        <td class="expense-amount">
-                            ${escapeHTML(formatCurrency(expense.amount))}
-                        </td>
-                        <td>${actions}</td>
-                    </tr>
-                `;
-            }).join("");
-        }
-
-        const totalPages = Math.max(
-            1,
-            Math.ceil(filteredExpenses.length / pageSize)
-        );
-
-        elements.paginationInfo.textContent =
-            `Showing ${filteredExpenses.length === 0 ? 0 : start + 1}–` +
-            `${Math.min(end, filteredExpenses.length)} of ` +
-            `${filteredExpenses.length} expenses`;
-
-        elements.previousButton.disabled = currentPage <= 1;
-        elements.nextButton.disabled = currentPage >= totalPages;
-    }
-
-    function applyFilters() {
-        const search = elements.search.value.toLowerCase();
-        const category = elements.categoryFilter.value;
-        const date = elements.dateFilter.value;
-
-        filteredExpenses = allExpenses.filter(function (expense) {
-            const searchableText = [
-                expense.expense_category,
-                expense.description,
-                expense.receipt_number,
-                expense.payment_method
-            ].join(" ").toLowerCase();
-
-            const matchesSearch = searchableText.includes(search);
-
-            const matchesCategory =
-                !category || expense.expense_category === category;
-
-            const matchesDate =
-                !date ||
-                String(expense.expense_date).substring(0, 10) === date;
-
-            return matchesSearch && matchesCategory && matchesDate;
-        });
-
-        currentPage = 1;
-
-        updateSummary();
-        renderExpenses();
-    }
-
-    async function loadExpenses() {
-        showTableMessage("Loading expenses...");
-
-        try {
-            const response = await window.expenseService.getExpenses();
-
-            allExpenses = getExpenseArray(response);
-
-            applyFilters();
-
-            await loadSummary();
-        } catch (error) {
-            console.error("Expense loading error:", error);
-
-            showTableMessage(
-                error.message || "Unable to load expenses."
-            );
-        }
-    }
-
-    async function loadSummary() {
-        try {
-            const response =
-                await window.expenseService.getExpenseSummary();
-
-            const data = getPayload(response);
-            const summary = data.summary || data;
-
-            if (summary.total_expenses !== undefined) {
-                elements.total.textContent =
-                    formatCurrency(summary.total_expenses);
-            }
-
-            if (summary.expense_count !== undefined) {
-                elements.count.textContent = summary.expense_count;
-            }
-
-            if (summary.average_expense !== undefined) {
-                elements.average.textContent =
-                    formatCurrency(summary.average_expense);
-            }
-        } catch (error) {
-            console.warn(
-                "Expense summary could not be loaded:",
-                error
-            );
-        }
-    }
+    /* ---------------------------------------------
+       CREATE OR UPDATE EXPENSE
+    --------------------------------------------- */
 
     async function saveExpense(event) {
         event.preventDefault();
 
-        if (!canManageExpenses) {
-            showFormMessage("You do not have permission to manage expenses.");
-            return;
-        }
-
-        const amount = Number(elements.amount.value);
-
-        if (!Number.isFinite(amount) || amount <= 0) {
-            showFormMessage("Please enter a valid expense amount.");
-            return;
-        }
+        const expenseId = elements.expenseId.value;
 
         const expenseData = {
             expense_category: elements.category.value,
             description: elements.description.value,
-            amount: amount,
+            amount: elements.amount.value,
             expense_date: elements.date.value,
             payment_method: elements.paymentMethod.value,
-            receipt_number: elements.receipt.value || null
+            receipt_number: elements.receipt.value
         };
 
         if (
             !expenseData.expense_category ||
-            !expenseData.description ||
+            !expenseData.amount ||
             !expenseData.expense_date ||
             !expenseData.payment_method
         ) {
@@ -380,49 +460,81 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
+        if (Number(expenseData.amount) <= 0) {
+            showFormMessage("The expense amount must be greater than zero.");
+            return;
+        }
+
         elements.saveButton.disabled = true;
         elements.saveButton.textContent = "Saving...";
 
         try {
-            const expenseId = elements.expenseId.value;
-
             if (expenseId) {
                 await window.expenseService.updateExpense(
+                    businessId,
                     expenseId,
                     expenseData
                 );
             } else {
                 await window.expenseService.createExpense(
+                    businessId,
                     expenseData
                 );
             }
 
             closeModal();
+
             await loadExpenses();
 
         } catch (error) {
-            console.error("Expense save error:", error);
-
+            console.error("Saving expense error:", error);
             showFormMessage(
-                error.message || "Unable to save expense."
+                error.message || "Unable to save the expense."
             );
         } finally {
             elements.saveButton.disabled = false;
-            elements.saveButton.textContent =
-                elements.expenseId.value
-                    ? "Update Expense"
-                    : "Save Expense";
+            elements.saveButton.textContent = expenseId
+                ? "Update Expense"
+                : "Save Expense";
         }
     }
 
-    // Add expense
+    /* ---------------------------------------------
+       EDIT EXISTING EXPENSE
+    --------------------------------------------- */
+
+    async function editExpense(expenseId) {
+        try {
+            const result = await window.expenseService.getExpense(
+                businessId,
+                expenseId
+            );
+
+            if (!result.data) {
+                throw new Error("Expense information was not found.");
+            }
+
+            openModal(result.data);
+
+        } catch (error) {
+            console.error("Edit expense error:", error);
+            alert(error.message || "Unable to open this expense.");
+        }
+    }
+
+    /* ---------------------------------------------
+       EVENT LISTENERS
+    --------------------------------------------- */
+
     elements.addButton.addEventListener("click", function () {
         openModal();
     });
 
-    // Close modal
-    elements.closeButton.addEventListener("click", closeModal);
-    elements.cancelButton.addEventListener("click", closeModal);
+    document.getElementById("close-expense-modal")
+        .addEventListener("click", closeModal);
+
+    document.getElementById("cancel-expense-btn")
+        .addEventListener("click", closeModal);
 
     elements.modal.addEventListener("click", function (event) {
         if (event.target === elements.modal) {
@@ -430,71 +542,75 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Save expense
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape" &&
+            elements.modal.classList.contains("active")) {
+            closeModal();
+        }
+    });
+
     elements.form.addEventListener("submit", saveExpense);
 
-    // Search and filters
-    elements.search.addEventListener("input", applyFilters);
+    elements.table.addEventListener("click", function (event) {
+        const editButton = event.target.closest(".edit-expense");
 
-    elements.categoryFilter.addEventListener(
-        "change",
-        applyFilters
-    );
+        if (editButton) {
+            editExpense(editButton.dataset.id);
+        }
+    });
 
-    elements.dateFilter.addEventListener(
-        "change",
-        applyFilters
-    );
+    elements.search.addEventListener("input", function () {
+        clearTimeout(searchTimer);
+
+        searchTimer = setTimeout(function () {
+            state.search = elements.search.value.trim();
+            state.page = 1;
+            loadExpenses();
+        }, 350);
+    });
+
+    elements.categoryFilter.addEventListener("change", function () {
+        state.category = elements.categoryFilter.value;
+        state.page = 1;
+        loadExpenses();
+    });
+
+    elements.dateFilter.addEventListener("change", function () {
+        state.date = elements.dateFilter.value;
+        state.page = 1;
+        loadExpenses();
+    });
 
     elements.resetFilters.addEventListener("click", function () {
         elements.search.value = "";
         elements.categoryFilter.value = "";
         elements.dateFilter.value = "";
 
-        applyFilters();
+        state.search = "";
+        state.category = "";
+        state.date = "";
+        state.page = 1;
+
+        loadExpenses();
     });
 
-    // Edit expense
-    elements.table.addEventListener("click", function (event) {
-        const button = event.target.closest(".edit-expense-btn");
-
-        if (!button) {
-            return;
-        }
-
-        const expense = allExpenses.find(function (item) {
-            return String(getExpenseId(item)) === button.dataset.id;
-        });
-
-        if (expense) {
-            openModal(expense);
+    elements.previous.addEventListener("click", function () {
+        if (state.page > 1) {
+            state.page--;
+            loadExpenses();
         }
     });
 
-    // Pagination
-    elements.previousButton.addEventListener("click", function () {
-        if (currentPage > 1) {
-            currentPage--;
-            renderExpenses();
+    elements.next.addEventListener("click", function () {
+        if (state.page < state.totalPages) {
+            state.page++;
+            loadExpenses();
         }
     });
 
-    elements.nextButton.addEventListener("click", function () {
-        const totalPages = Math.ceil(
-            filteredExpenses.length / pageSize
-        );
+    /* ---------------------------------------------
+       INITIAL PAGE LOAD
+    --------------------------------------------- */
 
-        if (currentPage < totalPages) {
-            currentPage++;
-            renderExpenses();
-        }
-    });
-
-    // Hide add button for roles without permission
-    if (!canManageExpenses) {
-        elements.addButton.style.display = "none";
-    }
-
-    // Initial loading
     loadExpenses();
 });

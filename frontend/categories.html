@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Categories | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/categories.css">
+</head>
+<body>
+    <div class="app-layout">
+    <div id="sidebarMount"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <main class="app-main">
+            <header class="topbar">
+                <div class="topbar-left">
+<button class="sidebar-toggle" id="menuToggle"
+        type="button" aria-label="Toggle navigation">
+    ☰
+</button>
+                    <div>
+                        <h1>Categories</h1>
+                        <p>Organize your products into categories.</p>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div id="userProfile"></div>
+                </div>
+            </header>
+
+            <section class="page-content">
+                <div class="category-toolbar">
+                    <div>
+                        <h2>Product Categories</h2>
+                        <p>Manage and organize your business categories.</p>
+                    </div>
+
+                    <button class="btn btn-primary" id="addCategoryBtn"
+                            type="button">
+                        + Add Category
+                    </button>
+                </div>
+
+                <div class="category-stats">
+                    <article class="category-stat-card">
+                        <span>Total Categories</span>
+                        <strong id="totalCategories">0</strong>
+                    </article>
+
+                    <article class="category-stat-card">
+                        <span>Active Categories</span>
+                        <strong id="activeCategories">0</strong>
+                    </article>
+
+                    <article class="category-stat-card">
+                        <span>Inactive Categories</span>
+                        <strong id="inactiveCategories">0</strong>
+                    </article>
+                </div>
+
+                <section class="category-panel">
+                    <div class="category-filters">
+                        <input
+                            type="search"
+                            id="categorySearch"
+                            placeholder="Search categories..."
+                            aria-label="Search categories"
+                        >
+
+                        <select id="categoryStatusFilter"
+                                aria-label="Filter by status">
+                            <option value="">All statuses</option>
+                            <option value="active">Active</option>
+                            <option value="inactive">Inactive</option>
+                        </select>
+                    </div>
+
+                    <div id="categoryMessage" class="category-message"
+                         role="status"></div>
+
+                    <div class="table-responsive">
+                        <table class="data-table">
+                            <thead>
+                                <tr>
+                                    <th>Category Name</th>
+                                    <th>Description</th>
+                                    <th>Products</th>
+                                    <th>Status</th>
+                                    <th>Created</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="categoriesTableBody">
+                                <tr>
+                                    <td colspan="6">Loading categories...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="categories-pagination">
+                            <span id="categoriesPageInfo">Page 1</span>
+
+                            <div>
+                                <button
+                                    type="button"
+                                    id="previousCategoriesPage"
+                                    class="btn btn-secondary"
+                                    disabled
+                                >
+                                    Previous
+                                </button>
+
+                                <button
+                                    type="button"
+                                    id="nextCategoriesPage"
+                                    class="btn btn-secondary"
+                                    disabled
+                                >
+                                    Next
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </section>
+        </main>
+    </div>
+
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h2 id="categoryModalTitle">Add Category</h2>
+                <button type="button" id="closeCategoryModal"
+                        class="modal-close" aria-label="Close">
+                    &times;
+                </button>
+            </div>
+
+            <form id="categoryForm">
+                <div class="form-group">
+                    <label for="categoryName">Category Name</label>
+                    <input type="text" id="categoryName"
+                           name="category_name" required
+                           maxlength="100"
+                           placeholder="e.g. Beverages">
+                </div>
+
+                <div class="form-group">
+                    <label for="categoryDescription">Description</label>
+                    <textarea id="categoryDescription"
+                              name="description" rows="4"
+                              placeholder="Describe this category"></textarea>
+                </div>
+
+                <div id="categoryFormMessage"
+                     class="category-message" role="alert"></div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-secondary"
+                            id="cancelCategoryBtn">
+                        Cancel
+                    </button>
+
+                    <button type="submit" class="btn btn-primary"
+                            id="saveCategoryBtn">
+                        Save Category
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/services/category.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/components/navbar.js"></script>
+    <script src="js/pages/categories.js"></script>
+</body>
+</html>

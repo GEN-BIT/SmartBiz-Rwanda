@@ -258,6 +258,17 @@ function renderDashboardSummary(summary, inventory, role) {
 
     totalRevenue.textContent = formatCurrency(summary.revenue);
 
+    const monthlyExpenses = Number(
+        summary.expenses || 0
+    );
+
+    totalExpenses.textContent =
+        new Intl.NumberFormat("en-RW", {
+            style: "currency",
+            currency: "RWF",
+            maximumFractionDigits: 0
+        }).format(monthlyExpenses);
+
     document.getElementById("salesDescription").textContent =
         "Completed sales this month";
 
@@ -265,8 +276,6 @@ function renderDashboardSummary(summary, inventory, role) {
         "Revenue this month";
 
     if (role === "owner") {
-
-        totalExpenses.textContent = formatCurrency(summary.expenses);
 
         totalProfit.textContent =
             formatCurrency(summary.net_operating_result);

@@ -1,14 +1,140 @@
 
 /* =========================================================
-   SMARTBIZ RWANDA - EXPENSE MANAGEMENT
-   Responsive styles: desktop, tablet and mobile
-   ========================================================= */
+   SMARTBIZ RWANDA - EXPENSES PAGE
+   Responsive: Desktop, Laptop, Tablet and Mobile
+========================================================= */
+
+:root {
+    --expense-primary: var(--primary-color, #14532d);
+    --expense-primary-dark: #166534;
+    --expense-text: var(--text-primary, #1e293b);
+    --expense-muted: var(--text-secondary, #64748b);
+    --expense-border: var(--border-color, #e2e8f0);
+    --expense-surface: #ffffff;
+    --expense-radius: 15px;
+    --expense-shadow: 0 4px 16px rgba(15, 23, 42, 0.045);
+}
+
+/* =========================================================
+   MAIN PAGE LAYOUT
+========================================================= */
+
+.expenses-page {
+    width: auto;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 100vh;
+    padding: clamp(18px, 2.4vw, 36px);
+    overflow-x: hidden;
+}
+
+.expenses-page *,
+.expenses-page *::before,
+.expenses-page *::after {
+    box-sizing: border-box;
+}
+
+.expenses-page .page-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 18px;
+    margin-bottom: 26px;
+}
+
+.expenses-page .page-header > div {
+    min-width: 0;
+}
+
+.expenses-page .page-header h1 {
+    margin: 0 0 5px;
+    color: var(--expense-text);
+    font-size: clamp(24px, 2.2vw, 31px);
+    font-weight: 750;
+    line-height: 1.3;
+}
+
+.expenses-page .page-header p {
+    margin: 0;
+    color: var(--expense-muted);
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.expenses-page .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 43px;
+    padding: 10px 18px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    font-size: 14px;
+    font-weight: 650;
+    line-height: 1.4;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease,
+                box-shadow 0.2s ease,
+                transform 0.2s ease;
+}
+
+.expenses-page .btn:active {
+    transform: translateY(1px);
+}
+
+.expenses-page .btn-primary {
+    color: #ffffff;
+    background: var(--expense-primary);
+    border-color: var(--expense-primary);
+    box-shadow: 0 3px 8px rgba(20, 83, 45, 0.12);
+}
+
+.expenses-page .btn-primary:hover {
+    color: #ffffff;
+    background: var(--expense-primary-dark);
+    border-color: var(--expense-primary-dark);
+    box-shadow: 0 5px 12px rgba(20, 83, 45, 0.17);
+}
+
+.expenses-page .btn-secondary {
+    color: #334155;
+    background: #ffffff;
+    border-color: var(--expense-border);
+}
+
+.expenses-page .btn-secondary:hover {
+    color: var(--expense-primary);
+    background: #f0fdf4;
+    border-color: #86efac;
+}
+
+.expenses-page button:focus-visible,
+.expenses-page input:focus-visible,
+.expenses-page select:focus-visible,
+.expenses-page textarea:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, 0.22);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
 
 .expense-summary {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 20px;
-    margin: 24px 0;
+    gap: 18px;
+    width: 100%;
+    margin-bottom: 24px;
 }
 
 .expense-summary-card {
@@ -16,153 +142,171 @@
     align-items: center;
     gap: 16px;
     min-width: 0;
+    min-height: 132px;
     padding: 22px;
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 14px;
-    box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+    background: var(--expense-surface);
+    border: 1px solid var(--expense-border);
+    border-radius: var(--expense-radius);
+    box-shadow: var(--expense-shadow);
 }
 
 .summary-icon {
     display: flex;
     align-items: center;
     justify-content: center;
-    flex-shrink: 0;
-    width: 52px;
-    height: 52px;
-    border-radius: 12px;
-    background: #eaf2ff;
-    color: #2563eb;
-    font-size: 13px;
+    flex: 0 0 58px;
+    width: 58px;
+    height: 58px;
+    color: var(--expense-primary);
+    background: #eaf5ee;
+    border-radius: 13px;
+    font-size: 15px;
     font-weight: 800;
+}
+
+.expense-summary-card > div:last-child {
+    min-width: 0;
 }
 
 .expense-summary-card p {
     margin: 0 0 7px;
-    color: var(--text-muted, #64748b);
-    font-size: 13px;
+    color: var(--expense-muted);
+    font-size: 14px;
+    line-height: 1.5;
 }
 
 .expense-summary-card h2 {
     margin: 0;
-    color: var(--text-color, #172033);
-    font-size: clamp(18px, 2vw, 24px);
+    color: var(--expense-text);
+    font-size: clamp(19px, 2vw, 27px);
+    font-weight: 750;
+    line-height: 1.3;
     overflow-wrap: anywhere;
 }
 
-/* Filters */
+/* =========================================================
+   FILTER PANEL
+========================================================= */
 
 .expense-filters {
-    display: flex;
+    display: grid;
+    grid-template-columns:
+        minmax(180px, 1fr)
+        minmax(145px, 0.6fr)
+        minmax(145px, 0.6fr)
+        auto;
     align-items: end;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-bottom: 22px;
-    padding: 18px;
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 12px;
+    gap: 15px;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 24px;
+    padding: 22px;
+    background: var(--expense-surface);
+    border: 1px solid var(--expense-border);
+    border-radius: var(--expense-radius);
+    box-shadow: var(--expense-shadow);
 }
 
-.filter-search {
-    flex: 1 1 220px;
+.filter-search,
+.filter-group {
+    min-width: 0;
 }
 
 .filter-group {
     display: flex;
-    flex: 0 1 190px;
     flex-direction: column;
-    gap: 7px;
+    gap: 8px;
 }
 
-.filter-group label,
-#expense-form label {
-    color: var(--text-color, #334155);
+.filter-group label {
+    color: var(--expense-text);
     font-size: 13px;
-    font-weight: 600;
+    font-weight: 650;
 }
 
 .expense-filters input,
-.expense-filters select,
-#expense-form input,
-#expense-form select,
-#expense-form textarea {
+.expense-filters select {
+    display: block;
     width: 100%;
+    max-width: 100%;
     min-width: 0;
-    min-height: 44px;
-    padding: 10px 12px;
-    color: var(--text-color, #172033);
+    height: 46px;
+    padding: 0 13px;
+    color: var(--expense-text);
     background: #ffffff;
-    border: 1px solid var(--border-color, #dbe1e8);
-    border-radius: 8px;
-    font: inherit;
+    border: 1px solid var(--expense-border);
+    border-radius: 9px;
     outline: none;
+    font-family: inherit;
+    font-size: 14px;
 }
 
 .expense-filters input:focus,
-.expense-filters select:focus,
-#expense-form input:focus,
-#expense-form select:focus,
-#expense-form textarea:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+.expense-filters select:focus {
+    border-color: var(--expense-primary);
+    box-shadow: 0 0 0 3px rgba(20, 83, 45, 0.09);
 }
 
-/* Buttons */
-
-#reset-expense-filters,
-#expense-prev-page,
-#expense-next-page {
-    min-height: 42px;
-    padding: 9px 15px;
-    border: 1px solid var(--border-color, #dbe1e8);
-    border-radius: 8px;
-    background: #ffffff;
-    color: var(--text-color, #334155);
-    font-weight: 600;
-    cursor: pointer;
+.filter-search input {
+    height: 46px;
 }
 
-#expense-prev-page:disabled,
-#expense-next-page:disabled {
-    opacity: 0.45;
-    cursor: not-allowed;
+.expense-filters > .btn {
+    min-width: 76px;
+    height: 46px;
 }
 
-/* Expense table */
+/* =========================================================
+   EXPENSE RECORDS PANEL
+========================================================= */
 
 .expense-table-section {
+    width: 100%;
     min-width: 0;
-    padding: 20px;
-    background: var(--card-bg, #ffffff);
-    border: 1px solid var(--border-color, #e5e7eb);
-    border-radius: 14px;
+    padding: 25px;
+    background: var(--expense-surface);
+    border: 1px solid var(--expense-border);
+    border-radius: var(--expense-radius);
+    box-shadow: var(--expense-shadow);
 }
 
 .section-heading {
     display: flex;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     gap: 12px;
-    margin-bottom: 18px;
+    margin-bottom: 22px;
 }
 
 .section-heading h2 {
     margin: 0 0 6px;
-    font-size: 18px;
-    color: var(--text-color, #172033);
+    color: var(--expense-text);
+    font-size: 20px;
+    font-weight: 750;
 }
 
 .section-heading p {
     margin: 0;
-    color: var(--text-muted, #64748b);
-    font-size: 13px;
+    color: var(--expense-muted);
+    font-size: 14px;
+    line-height: 1.6;
 }
 
+/* =========================================================
+   EXPENSE TABLE
+========================================================= */
+
 .table-responsive {
+    display: block;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
     -webkit-overflow-scrolling: touch;
+    border-bottom: 1px solid var(--expense-border);
 }
 
 .expense-table {
@@ -172,85 +316,134 @@
     text-align: left;
 }
 
-.expense-table th,
-.expense-table td {
-    padding: 14px 12px;
-    border-bottom: 1px solid var(--border-color, #edf0f4);
-    font-size: 13px;
-    vertical-align: middle;
-}
-
 .expense-table th {
-    color: var(--text-muted, #64748b);
-    background: #f8fafc;
+    padding: 15px 13px;
+    color: #64748b;
+    background: #f5f8fc;
+    border-bottom: 1px solid var(--expense-border);
+    font-size: 13px;
     font-weight: 700;
     white-space: nowrap;
 }
 
 .expense-table td {
-    color: var(--text-color, #334155);
+    padding: 15px 13px;
+    color: var(--expense-text);
+    border-bottom: 1px solid #edf0f5;
+    font-size: 13px;
+    vertical-align: middle;
 }
 
 .expense-table tbody tr:hover {
     background: #f8fafc;
 }
 
-.table-message {
-    padding: 28px !important;
+.expense-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.expense-table .table-message {
+    padding: 30px 15px !important;
+    color: var(--expense-muted);
     text-align: center;
-    color: var(--text-muted, #64748b) !important;
 }
 
 .expense-amount {
-    font-weight: 700;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+.expense-payment {
+    display: inline-flex;
+    align-items: center;
+    padding: 5px 9px;
+    color: #334155;
+    background: #f1f5f9;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
     white-space: nowrap;
 }
 
 .expense-actions {
     display: flex;
+    align-items: center;
     gap: 7px;
     white-space: nowrap;
 }
 
 .expense-actions button {
-    min-height: 34px;
+    min-height: 33px;
     padding: 6px 10px;
-    border: 1px solid var(--border-color, #dbe1e8);
-    border-radius: 6px;
-    background: #ffffff;
-    color: #2563eb;
+    color: var(--expense-primary);
+    background: #eff6ff;
+    border: 1px solid #dbeafe;
+    border-radius: 7px;
     font-size: 12px;
-    font-weight: 600;
+    font-weight: 650;
     cursor: pointer;
 }
 
-.expense-actions .delete-expense-btn {
-    color: #dc2626;
+.expense-actions button:hover {
+    background: #dbeafe;
 }
 
-/* Pagination */
+.expense-actions button.delete-expense {
+    color: #dc2626;
+    background: #fef2f2;
+    border-color: #fee2e2;
+}
+
+/* =========================================================
+   PAGINATION
+========================================================= */
 
 .expense-pagination {
     display: flex;
     align-items: center;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 12px;
-    margin-top: 18px;
+    gap: 14px;
+    padding-top: 19px;
 }
 
 .expense-pagination p {
     margin: 0;
-    color: var(--text-muted, #64748b);
+    color: var(--expense-muted);
     font-size: 13px;
 }
 
 .expense-pagination > div {
     display: flex;
+    flex-wrap: wrap;
     gap: 8px;
 }
 
-/* Modal */
+.expense-pagination button {
+    min-height: 37px;
+    padding: 7px 14px;
+    color: var(--expense-text);
+    background: #ffffff;
+    border: 1px solid var(--expense-border);
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+.expense-pagination button:hover:not(:disabled) {
+    color: var(--expense-primary);
+    border-color: var(--expense-primary);
+}
+
+.expense-pagination button:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+/* =========================================================
+   ADD / EDIT EXPENSE MODAL
+========================================================= */
 
 .modal-overlay {
     position: fixed;
@@ -260,7 +453,7 @@
     align-items: center;
     justify-content: center;
     padding: 20px;
-    background: rgba(15, 23, 42, 0.55);
+    background: rgba(15, 23, 42, 0.58);
     overflow-y: auto;
 }
 
@@ -269,14 +462,15 @@
 }
 
 .modal-content {
-    width: 100%;
-    max-width: 570px;
-    max-height: calc(100dvh - 40px);
-    overflow-y: auto;
+    width: min(100%, 560px);
+    max-height: calc(100vh - 40px);
+    min-width: 0;
     padding: 25px;
+    overflow-y: auto;
     background: #ffffff;
-    border-radius: 14px;
-    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    border: 1px solid var(--expense-border);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(15, 23, 42, 0.2);
 }
 
 .modal-header {
@@ -289,32 +483,42 @@
 
 .modal-header h2 {
     margin: 0 0 6px;
-    color: #172033;
+    color: var(--expense-text);
     font-size: 21px;
 }
 
 .modal-header p {
     margin: 0;
-    color: #64748b;
+    color: var(--expense-muted);
     font-size: 13px;
 }
 
 .modal-close {
-    width: 38px;
-    height: 38px;
-    flex-shrink: 0;
-    border: none;
-    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    color: #64748b;
     background: #f1f5f9;
-    color: #334155;
+    border: 0;
+    border-radius: 8px;
     font-size: 25px;
     cursor: pointer;
 }
 
+.modal-close:hover {
+    color: #dc2626;
+    background: #fef2f2;
+}
+
+/* Expense form */
+
 #expense-form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 16px;
 }
 
 #expense-form .form-group {
@@ -322,6 +526,31 @@
     flex-direction: column;
     gap: 7px;
     min-width: 0;
+    margin: 0;
+}
+
+#expense-form label {
+    color: var(--expense-text);
+    font-size: 13px;
+    font-weight: 650;
+}
+
+#expense-form input,
+#expense-form select,
+#expense-form textarea {
+    display: block;
+    width: 100%;
+    max-width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 10px 12px;
+    color: var(--expense-text);
+    background: #ffffff;
+    border: 1px solid var(--expense-border);
+    border-radius: 8px;
+    outline: none;
+    font-family: inherit;
+    font-size: 14px;
 }
 
 #expense-form textarea {
@@ -329,105 +558,187 @@
     resize: vertical;
 }
 
+#expense-form input:focus,
+#expense-form select:focus,
+#expense-form textarea:focus {
+    border-color: var(--expense-primary);
+    box-shadow: 0 0 0 3px rgba(20, 83, 45, 0.09);
+}
+
 #expense-form .form-row {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 14px;
+    min-width: 0;
 }
 
 .expense-form-message {
     display: none;
-    padding: 10px 12px;
-    border-radius: 7px;
+    padding: 11px 13px;
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-radius: 8px;
     font-size: 13px;
 }
 
-.expense-form-message.error {
+.expense-form-message.visible {
     display: block;
-    color: #b91c1c;
-    background: #fee2e2;
-}
-
-.expense-form-message.success {
-    display: block;
-    color: #166534;
-    background: #dcfce7;
 }
 
 .modal-actions {
     display: flex;
+    align-items: center;
     justify-content: flex-end;
     flex-wrap: wrap;
     gap: 10px;
-    margin-top: 8px;
+    padding-top: 5px;
 }
 
-.modal-actions button {
-    min-height: 44px;
-    padding: 10px 18px;
-    border-radius: 8px;
-    cursor: pointer;
-}
+/* =========================================================
+   LAPTOPS AND SMALL DESKTOPS
+========================================================= */
 
-/* Tablet */
+@media (max-width: 1199px) {
 
-@media (max-width: 1024px) {
+    .expenses-page {
+        padding: 22px;
+    }
+
     .expense-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 14px;
+    }
+
+    .expense-summary-card:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .expense-filters {
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .expense-filters {
-        align-items: stretch;
-    }
-
     .filter-search {
-        flex-basis: 100%;
+        grid-column: 1 / -1;
     }
 
-    .filter-group {
-        flex: 1 1 180px;
+    .expense-filters > .btn {
+        justify-self: start;
     }
 }
 
-/* Mobile */
+/* =========================================================
+   TABLETS
+========================================================= */
 
-@media (max-width: 640px) {
-    .expense-summary {
-        grid-template-columns: 1fr;
-        gap: 12px;
-        margin: 18px 0;
+@media (max-width: 1023px) {
+
+    .expenses-page {
+        padding: 20px;
     }
 
     .expense-summary-card {
-        padding: 16px;
-    }
-
-    .expense-summary-card h2 {
-        font-size: 20px;
+        min-height: 115px;
+        padding: 18px;
     }
 
     .expense-filters {
-        flex-direction: column;
-        align-items: stretch;
-        padding: 14px;
-    }
-
-    .filter-search,
-    .filter-group {
-        width: 100%;
-        flex: 1 1 auto;
-    }
-
-    #reset-expense-filters {
-        width: 100%;
+        padding: 18px;
     }
 
     .expense-table-section {
-        padding: 14px;
+        padding: 20px;
+    }
+}
+
+/* =========================================================
+   MOBILE PHONES AND SMALL TABLETS
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .expenses-page {
+        width: 100%;
+        max-width: 100%;
+        min-height: auto;
+        padding: 20px 16px 95px;
+        margin-left: 0;
     }
 
-    .section-heading {
-        align-items: flex-start;
+    .expenses-page .page-header {
+        align-items: stretch;
+        flex-direction: column;
+        gap: 13px;
+        margin-bottom: 20px;
+    }
+
+    .expenses-page .page-header h1 {
+        font-size: 25px;
+    }
+
+    .expenses-page .page-header .btn {
+        width: 100%;
+        min-height: 46px;
+    }
+
+    .expense-summary {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+        margin-bottom: 18px;
+    }
+
+    .expense-summary-card {
+        min-height: 105px;
+        padding: 15px;
+        gap: 11px;
+    }
+
+    .expense-summary-card:last-child {
+        grid-column: 1 / -1;
+    }
+
+    .summary-icon {
+        flex-basis: 45px;
+        width: 45px;
+        height: 45px;
+        font-size: 13px;
+    }
+
+    .expense-summary-card p {
+        font-size: 12px;
+    }
+
+    .expense-summary-card h2 {
+        font-size: 19px;
+    }
+
+    .expense-filters {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 13px;
+        padding: 16px;
+        margin-bottom: 18px;
+    }
+
+    .filter-search {
+        grid-column: auto;
+    }
+
+    .expense-filters input,
+    .expense-filters select {
+        height: 45px;
+    }
+
+    .expense-filters > .btn {
+        width: 100%;
+        height: 45px;
+    }
+
+    .expense-table-section {
+        padding: 17px;
+    }
+
+    .section-heading h2 {
+        font-size: 19px;
     }
 
     .expense-pagination {
@@ -449,42 +760,124 @@
     }
 
     .modal-content {
-        max-height: 92dvh;
-        padding: 20px 16px;
-        border-radius: 16px 16px 0 0;
+        width: 100%;
+        max-height: 92vh;
+        padding: 21px 17px;
+        border-radius: 17px 17px 0 0;
     }
 
     #expense-form .form-row {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
+        gap: 16px;
     }
 
     .modal-actions {
         flex-direction: column-reverse;
     }
 
-    .modal-actions button {
+    .modal-actions .btn {
         width: 100%;
+        min-height: 45px;
     }
 }
 
-/* Extra-small phones */
+/* =========================================================
+   SMALL MOBILE PHONES
+========================================================= */
 
-@media (max-width: 360px) {
+@media (max-width: 479px) {
+
+    .expenses-page {
+        padding: 17px 12px 90px;
+    }
+
+    .expenses-page .page-header h1 {
+        font-size: 23px;
+    }
+
+    .expense-summary {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 11px;
+    }
+
+    .expense-summary-card,
+    .expense-summary-card:last-child {
+        grid-column: auto;
+        min-height: 95px;
+        padding: 15px;
+    }
+
+    .expense-summary-card h2 {
+        font-size: 21px;
+    }
+
+    .expense-filters {
+        padding: 14px;
+    }
+
+    .expense-table-section {
+        padding: 14px;
+    }
+
+    .section-heading h2 {
+        font-size: 18px;
+    }
+
+    .expense-pagination p {
+        font-size: 12px;
+    }
+
+    .modal-content {
+        padding: 19px 14px;
+    }
+}
+
+/* =========================================================
+   VERY NARROW PHONES
+========================================================= */
+
+@media (max-width: 359px) {
+
+    .expenses-page {
+        padding-right: 9px;
+        padding-left: 9px;
+    }
+
     .expense-summary-card {
         gap: 10px;
         padding: 13px;
     }
 
+    .expense-summary-card h2 {
+        font-size: 19px;
+    }
+
     .summary-icon {
-        width: 43px;
-        height: 43px;
+        flex-basis: 42px;
+        width: 42px;
+        height: 42px;
     }
 
     .expense-table-section {
-        padding: 10px;
+        padding: 11px;
     }
 
-    .modal-header h2 {
-        font-size: 18px;
+    .modal-content {
+        padding: 17px 12px;
+    }
+}
+
+/* =========================================================
+   ACCESSIBILITY
+========================================================= */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .expenses-page *,
+    .expenses-page *::before,
+    .expenses-page *::after {
+        scroll-behavior: auto !important;
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
     }
 }
