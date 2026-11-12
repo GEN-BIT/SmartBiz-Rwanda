@@ -122,7 +122,11 @@ document.addEventListener("DOMContentLoaded", function () {
                     <td>${escapeHTML(item.return_date || "—")}</td>
                     <td>${escapeHTML(item.reason || "—")}</td>
                     <td>${formatMoney(item.refund_amount)}</td>
-                    <td>${escapeHTML(item.status || "Unknown")}</td>
+                    <td>
+    <span class="return-status ${escapeHTML(item.status || "pending")}">
+        ${escapeHTML(item.status || "Unknown")}
+    </span>
+</td>
                     <td>
                         <button class="btn btn-secondary btn-sm"
                                 type="button"
@@ -255,7 +259,13 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    if (!getMembership()) {
+    const membership = getMembership();
+
+    if (membership && typeof window.renderSidebar === "function") {
+        window.renderSidebar(membership);
+    }
+
+    if (!membership) {
         returnsTableBody.innerHTML = `
             <tr>
                 <td colspan="7" class="returns-empty">

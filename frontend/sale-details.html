@@ -11,37 +11,46 @@
     <link rel="stylesheet" href="css/sales.css">
 </head>
 <body>
-    <div id="sidebarMount"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <main class="main-content sales-main">
-        <header class="sales-header details-header">
-            <div>
-                <p class="sales-eyebrow">SALES MANAGEMENT</p>
-                <h1>Sale Details</h1>
-                <p class="sales-subtitle">
-                    Review the invoice, items and payment records.
-                </p>
+    <div class="app-layout">
+        <div id="sidebarMount"></div>
+
+        <main class="app-main main-content sales-main">
+            <header class="sales-header details-header">
+                <div>
+                    <p class="sales-eyebrow">SALES MANAGEMENT</p>
+                    <h1>Sale Details</h1>
+                    <p class="sales-subtitle">
+                        Review the invoice, items and payment records.
+                    </p>
+                </div>
+
+                <div class="details-actions">
+                    <a href="sales.html" class="sales-secondary-link">
+                        Back to sales
+                    </a>
+
+                    <button type="button" id="printSaleBtn"
+                            class="sales-primary-link" disabled>
+                        Print invoice
+                    </button>
+                </div>
+            </header>
+
+            <div id="saleDetailsMessage"
+                 class="sales-message"
+                 role="alert"
+                 aria-live="polite"
+                 hidden></div>
+
+            <div id="saleDetailsContent">
+                <div class="sales-panel sales-loading">
+                    Loading sale details...
+                </div>
             </div>
-
-            <div class="details-actions">
-                <a href="sales.html" class="sales-secondary-link">
-                    Back to sales
-                </a>
-
-                <button type="button" id="printSaleBtn" class="sales-primary-link">
-                    Print invoice
-                </button>
-            </div>
-        </header>
-
-        <div id="saleDetailsMessage" class="sales-message" role="alert" hidden></div>
-
-        <div id="saleDetailsContent">
-            <div class="sales-panel sales-loading">
-                Loading sale details...
-            </div>
-        </div>
-    </main>
+        </main>
+    </div>
 
     <script src="js/config/api.js"></script>
     <script src="js/services/auth.service.js"></script>

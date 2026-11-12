@@ -1,80 +1,40 @@
-/*
- * SmartBiz Rwanda - Sale Details
- */
-
 document.addEventListener("DOMContentLoaded", async function () {
     const token = sessionStorage.getItem("smartbiz_token");
-    const storedMembership = sessionStorage.getItem("smartbiz_membership");
+    const membershipText = sessionStorage.getItem("smartbiz_membership");
 
-    if (!token || !storedMembership) {
-        window.location.href = "login.html";
-        return;
-    }
+    const messageElement = document.getElementById("saleDetailsMessage");
+    const contentElement = document.getElementById("saleDetailsContent");
+    const printButton = document.getElementById("printSaleBtn");
 
     let membership;
 
-    try {
-        membership = JSON.parse(storedMembership);
-    } catch {
-        sessionStorage.removeItem("smartbiz_membership");
-        window.location.href = "login.html";
-        return;
-    }
-
-    const businessId = membership.business_id;
-
-    if (
-        !businessId ||
-        membership.membership_status !== "active" ||
-        (membership.business_status &&
-            membership.business_status !== "active")
-    ) {
-        showMessage("Your business membership is not active.");
-        return;
-    }
-
-    if (
-        !["owner", "manager", "cashier", "stock_manager"].includes(
-            membership.role
-        )
-    ) {
-        showMessage("You do not have permission to view sale details.");
-        return;
-    }
-
-    if (typeof window.renderSidebar === "function") {
-        window.renderSidebar();
-    }
-
-    const elements = {
-        message: document.getElementById("saleDetailsMessage"),
-        content: document.getElementById("saleDetailsContent"),
-        printButton: document.getElementById("printSaleBtn")
-    };
-
-    const params = new URLSearchParams(window.location.search);
-    const saleId = Number(params.get("saleId"));
-
-    const currencyFormatter = new Intl.NumberFormat("en-RW", {
-        maximumFractionDigits: 0
-    });
-
-    function formatMoney(value) {
-        return `RWF ${currencyFormatter.format(Number(value) || 0)}`;
+    function showMessage(message, type = "error") {
+        messageElement.textContent = message;
+        messageElement.className = `sales-message ${type}`;
+        messageElement.hidden = false;
     }
 
     function escapeHTML(value) {
-        return String(value ?? "").replace(/[&<>"']/g, character => {
+        return String(value ?? "").replace(/[&<>"']/g, function (character) {
             const entities = {
                 "&": "&amp;",
                 "<": "&lt;",
                 ">": "&gt;",
                 '"': "&quot;",
-                "'": "&#039;"
+                "'": "&#39;"
             };
 
             return entities[character];
         });
+    }
+
+    function formatMoney(value) {
+        const amount = Number(value || 0);
+
+        return `RWF ${amount.toLocaleString("en-RW", {
+            minimumFractionDigits: 0,
+            maximumFractionDigits: 2
+        })}`;
     }
 
     function formatDate(value) {
@@ -82,55 +42,56 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const date = new Date(value);
 
-        if (Number.isNaN(date.getTime())) {
-            return "—";
-        }
+        if (Number.isNaN(date.getTime())) return "—";
 
         return date.toLocaleString("en-GB", {
-            dateStyle: "medium",
-            timeStyle: "short"
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
         });
     }
 
-    function showMessage(message) {
-        elements.message.textContent = message;
-        elements.message.hidden = false;
-    }
-
-    function statusBadge(status) {
-        const safeStatus = escapeHTML(status || "unknown");
+    function statusBadge(value) {
+        const status = String(value || "unknown").toLowerCase();
+        const safeStatus = escapeHTML(status);
 
         return `
-            <span class="sales-status ${safeStatus}">
-                ${safeStatus.replace(/_/g, " ")}
+            <span class="status-badge status-${safeStatus}">
+                ${escapeHTML(status.replaceAll("_", " "))}
             </span>
         `;
     }
 
     function renderItems(items) {
-        if (!items.length) {
+        if (!Array.isArray(items) || items.length === 0) {
             return `
                 <tr>
-                    <td colspan="5" class="sales-empty">
-                        No sale items found.
+                    <td colspan="5" class="sales-empty-cell">
+                        No sale items were returned.
                     </td>
                 </tr>
             `;
         }
 
-        return items.map(item => `
-            <tr>
-                <td>${escapeHTML(item.product_name)}</td>
-                <td>${escapeHTML(item.sku || "—")}</td>
-                <td>${escapeHTML(item.quantity)}</td>
-                <td>${formatMoney(item.unit_price)}</td>
-                <td>${formatMoney(item.subtotal)}</td>
-            </tr>
-        `).join("");
+        return items.map(function (item) {
+            return `
+                <tr>
+                    <td>
+                        <strong>${escapeHTML(item.product_name || "Product")}</strong>
+                        <small>${escapeHTML(item.sku || "—")}</small>
+                    </td>
+                    <td>${escapeHTML(item.quantity ?? 0)}</td>
+                    <td>${formatMoney(item.unit_price)}</td>
+                    <td>${formatMoney(item.subtotal)}</td>
+                </tr>
+            `;
+        }).join("");
     }
 
     function renderPayments(payments) {
-        if (!payments.length) {
+        if (!Array.isArray(payments) || payments.length === 0) {
             return `
                 <div class="sale-payment-empty">
                     No payment records are available for this sale.
@@ -143,24 +104,33 @@ document.addEventListener("DOMContentLoaded", async function () {
                 <table class="sales-table">
                     <thead>
                         <tr>
-                            <th>Payment date</th>
+                            <th>Date</th>
                             <th>Method</th>
-                            <th>Reference</th>
                             <th>Type</th>
+                            <th>Reference</th>
                             <th>Amount</th>
                         </tr>
                     </thead>
-
                     <tbody>
-                        ${payments.map(payment => `
-                            <tr>
-                                <td>${escapeHTML(formatDate(payment.created_at))}</td>
-                                <td>${escapeHTML(payment.payment_method.replace(/_/g, " "))}</td>
-                                <td>${escapeHTML(payment.transaction_reference || "—")}</td>
-                                <td>${escapeHTML(payment.payment_type.replace(/_/g, " "))}</td>
-                                <td>${formatMoney(payment.amount)}</td>
-                            </tr>
-                        `).join("")}
+                        ${payments.map(function (payment) {
+                            return `
+                                <tr>
+                                    <td>${formatDate(payment.created_at)}</td>
+                                    <td>${escapeHTML(
+                                        String(payment.payment_method || "—")
+                                            .replaceAll("_", " ")
+                                    )}</td>
+                                    <td>${escapeHTML(
+                                        String(payment.payment_type || "—")
+                                            .replaceAll("_", " ")
+                                    )}</td>
+                                    <td>${escapeHTML(
+                                        payment.transaction_reference || "—"
+                                    )}</td>
+                                    <td><strong>${formatMoney(payment.amount)}</strong></td>
+                                </tr>
+                            `;
+                        }).join("")}
                     </tbody>
                 </table>
             </div>
@@ -168,40 +138,39 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     function renderSaleDetails(result) {
-        const sale = result.sale;
-        const items = Array.isArray(result.items) ? result.items : [];
-        const payments = Array.isArray(result.payments)
-            ? result.payments
-            : [];
+        const sale = result?.sale;
+        const items = result?.items;
+        const payments = result?.payments;
 
-        elements.content.innerHTML = `
+        if (!sale) {
+            throw new Error("The sale details were not found in the server response.");
+        }
+
+        contentElement.innerHTML = `
             <section class="sale-details-grid">
-                <article class="sale-info-card">
-                    <h2>Invoice information</h2>
-
-                    <div class="sale-info-row">
-                        <span>Invoice number</span>
-                        <strong>${escapeHTML(sale.invoice_number)}</strong>
+                <article class="sales-panel sale-info-card">
+                    <div class="panel-heading">
+                        <div>
+                            <h2>Invoice information</h2>
+                            <p>Sale reference and customer information</p>
+                        </div>
+                        ${statusBadge(sale.sale_status)}
                     </div>
 
                     <div class="sale-info-row">
-                        <span>Sale date</span>
-                        <strong>${escapeHTML(formatDate(sale.created_at))}</strong>
+                        <span>Invoice number</span>
+                        <strong>${escapeHTML(sale.invoice_number || "—")}</strong>
                     </div>
 
                     <div class="sale-info-row">
                         <span>Sale ID</span>
-                        <strong>${escapeHTML(sale.sale_id)}</strong>
+                        <strong>${escapeHTML(sale.sale_id ?? "—")}</strong>
                     </div>
 
                     <div class="sale-info-row">
-                        <span>Sale status</span>
-                        <strong>${statusBadge(sale.sale_status)}</strong>
+                        <span>Date</span>
+                        <strong>${formatDate(sale.created_at)}</strong>
                     </div>
-                </article>
-
-                <article class="sale-info-card">
-                    <h2>Customer and payment</h2>
 
                     <div class="sale-info-row">
                         <span>Customer</span>
@@ -210,46 +179,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
                     <div class="sale-info-row">
                         <span>Payment status</span>
-                        <strong>${statusBadge(sale.payment_status)}</strong>
-                    </div>
-
-                    <div class="sale-info-row">
-                        <span>Amount paid</span>
-                        <strong>${formatMoney(sale.amount_paid)}</strong>
-                    </div>
-
-                    <div class="sale-info-row">
-                        <span>Balance due</span>
-                        <strong>${formatMoney(sale.balance_due)}</strong>
+                        ${statusBadge(sale.payment_status)}
                     </div>
                 </article>
-            </section>
 
-            <section class="sales-panel sale-items-panel">
-                <div class="sales-panel-heading">
-                    <h2>Purchased products</h2>
-                    <p>Products included in this invoice.</p>
-                </div>
+                <article class="sales-panel sale-info-card">
+                    <div class="panel-heading">
+                        <div>
+                            <h2>Payment summary</h2>
+                            <p>Amounts recorded for this sale</p>
+                        </div>
+                    </div>
 
-                <div class="sales-table-wrapper">
-                    <table class="sales-table">
-                        <thead>
-                            <tr>
-                                <th>Product</th>
-                                <th>SKU</th>
-                                <th>Quantity</th>
-                                <th>Unit price</th>
-                                <th>Subtotal</th>
-                            </tr>
-                        </thead>
-
-                        <tbody>
-                            ${renderItems(items)}
-                        </tbody>
-                    </table>
-                </div>
-
-                <div class="sale-total-block">
                     <div class="sale-info-row">
                         <span>Subtotal</span>
                         <strong>${formatMoney(sale.subtotal)}</strong>
@@ -266,46 +207,126 @@ document.addEventListener("DOMContentLoaded", async function () {
                     </div>
 
                     <div class="sale-info-row">
-                        <span>Total amount</span>
+                        <span>Amount paid</span>
+                        <strong>${formatMoney(sale.amount_paid)}</strong>
+                    </div>
+
+                    <div class="sale-info-row">
+                        <span>Balance due</span>
+                        <strong>${formatMoney(sale.balance_due)}</strong>
+                    </div>
+
+                    <div class="sale-total-block">
+                        <span>Total sale amount</span>
                         <strong>${formatMoney(sale.total_amount)}</strong>
                     </div>
+                </article>
+            </section>
+
+            <section class="sales-panel sale-items-panel">
+                <div class="panel-heading">
+                    <div>
+                        <h2>Items sold</h2>
+                        <p>Products and quantities included in this sale</p>
+                    </div>
+                </div>
+
+                <div class="sales-table-wrapper">
+                    <table class="sales-table">
+                        <thead>
+                            <tr>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Unit price</th>
+                                <th>Line total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${renderItems(items)}
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
             <section class="sales-panel sale-payments-panel">
-                <div class="sales-panel-heading">
-                    <h2>Payment records</h2>
-                    <p>Payments recorded against this invoice.</p>
+                <div class="panel-heading">
+                    <div>
+                        <h2>Payment records</h2>
+                        <p>Payments recorded against this sale</p>
+                    </div>
                 </div>
 
                 ${renderPayments(payments)}
             </section>
         `;
+
+        printButton.disabled = false;
     }
 
-    elements.printButton.addEventListener("click", function () {
-        window.print();
-    });
-
-    if (!Number.isSafeInteger(saleId) || saleId <= 0) {
-        showMessage("A valid sale ID was not provided.");
-        elements.content.innerHTML = "";
+    if (!token || !membershipText) {
+        window.location.href = "login.html";
         return;
     }
 
     try {
+        membership = JSON.parse(membershipText);
+    } catch (error) {
+        sessionStorage.removeItem("smartbiz_membership");
+        window.location.href = "login.html";
+        return;
+    }
+
+    const businessId = membership.business_id;
+    const membershipStatus = String(membership.membership_status || "").toLowerCase();
+    const businessStatus = String(membership.business_status || "").toLowerCase();
+    const role = String(membership.role || "").toLowerCase();
+
+    if (!businessId || membershipStatus !== "active" || businessStatus !== "active") {
+        showMessage("Your business membership is not active. Please contact the business owner.");
+        return;
+    }
+
+    const allowedRoles = ["owner", "manager", "cashier", "stock_manager"];
+
+    if (!allowedRoles.includes(role)) {
+        showMessage("You do not have permission to view sale details.");
+        return;
+    }
+
+    if (typeof window.renderSidebar === "function") {
+        window.renderSidebar(membership);
+    }
+
+    const saleId = new URLSearchParams(window.location.search).get("saleId");
+
+    if (!saleId || !/^\d+$/.test(saleId) || Number(saleId) <= 0) {
+        contentElement.innerHTML = "";
+        showMessage("A valid sale ID was not provided.");
+        return;
+    }
+
+    printButton.addEventListener("click", function () {
+        window.print();
+    });
+
+    try {
         const response = await window.salesService.getSaleById(
             businessId,
-            saleId
+            Number(saleId)
         );
 
-        if (!response.data || !response.data.sale) {
-            throw new Error("Sale details were not found.");
+        if (!response || !response.data) {
+            throw new Error("The server returned an unexpected sale response.");
         }
 
         renderSaleDetails(response.data);
     } catch (error) {
-        elements.content.innerHTML = "";
-        showMessage(error.message);
+        contentElement.innerHTML = `
+            <div class="sales-panel sales-empty-state">
+                Sale details could not be loaded.
+            </div>
+        `;
+
+        showMessage(error.message || "Unable to load sale details.");
     }
 });

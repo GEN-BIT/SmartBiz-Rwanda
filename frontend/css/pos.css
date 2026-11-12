@@ -458,3 +458,128 @@
         font-size: 12px;
     }
 }
+
+/* POS RESPONSIVE AND OVERFLOW IMPROVEMENTS */
+
+.pos-main {
+    width: 100%;
+    min-width: 0;
+    margin-left: 0;
+    overflow-x: hidden;
+}
+
+.pos-layout,
+.pos-products-panel,
+.pos-cart-panel,
+.pos-product-grid,
+.pos-cart-item {
+    min-width: 0;
+}
+
+.pos-product-card,
+.pos-cart-item,
+.pos-form-field {
+    overflow-wrap: anywhere;
+}
+
+.pos-cart-controls {
+    flex-wrap: wrap;
+}
+
+.pos-quantity-input {
+    max-width: 66px;
+}
+
+.pos-cart-line-total {
+    text-align: right;
+}
+
+.pos-checkout-button,
+.pos-history-link,
+.pos-product-card,
+.pos-quantity-button,
+.pos-remove-button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+.pos-product-card:focus-visible,
+.pos-checkout-button:focus-visible,
+.pos-history-link:focus-visible,
+.pos-quantity-button:focus-visible {
+    outline: 2px solid var(--primary-color, #315efb);
+    outline-offset: 3px;
+}
+
+@media (max-width: 800px) {
+    .pos-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pos-cart-panel {
+        position: static;
+    }
+
+    .pos-products-panel,
+    .pos-cart-panel {
+        width: 100%;
+    }
+}
+
+@media (max-width: 520px) {
+    .pos-main {
+        padding: 14px 12px 28px;
+    }
+
+    .pos-header {
+        gap: 12px;
+    }
+
+    .pos-header h1 {
+        font-size: 23px;
+    }
+
+    .pos-product-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .pos-cart-item {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .pos-cart-controls {
+        gap: 5px;
+    }
+
+    .pos-quantity-button {
+        min-width: 30px;
+        min-height: 30px;
+    }
+
+    .pos-form-field input,
+    .pos-form-field select {
+        min-height: 42px;
+    }
+
+    .pos-checkout-button {
+        min-height: 48px;
+    }
+}
+
+@media (max-width: 350px) {
+    .pos-product-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pos-products-panel,
+    .pos-cart-panel {
+        padding: 11px;
+    }
+
+    .pos-cart-item {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .pos-cart-line-total {
+        text-align: left;
+    }
+}

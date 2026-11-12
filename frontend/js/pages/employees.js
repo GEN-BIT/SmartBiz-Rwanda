@@ -182,6 +182,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     const membership = getMembership();
 
+    if (membership && typeof window.renderSidebar === "function") {
+        window.renderSidebar(membership);
+    }
+
     if (!membership) {
         document.getElementById("employeesTableBody").innerHTML = `
             <tr>

@@ -3,21 +3,74 @@
 }
 
 .app-layout {
+    display: flex;
     min-height: 100vh;
+    width: 100%;
+}
+
+#sidebarMount {
+    flex: 0 0 260px;
+    width: 260px;
+    min-width: 260px;
+}
+
+.app-main {
+    flex: 1 1 auto;
+    min-width: 0;
+    width: auto;
+    min-height: 100vh;
+    margin-left: 0;
+    padding: 24px;
+    box-sizing: border-box;
+}
+
+/* Tablet */
+@media (max-width: 1024px) {
+    .app-main {
+        padding: 20px;
+    }
+}
+
+/* Mobile */
+@media (max-width: 767px) {
+    .app-layout {
+        display: block;
+        min-height: 100vh;
+    }
+
+    #sidebarMount {
+        width: 0;
+        min-width: 0;
+        flex: none;
+    }
+
+    .app-main {
+        width: 100%;
+        min-height: 100vh;
+        margin-left: 0;
+        padding: 17px 15px 85px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-main {
+        padding: 14px 12px 85px;
+    }
 }
 
 .sidebar {
     position: fixed;
     inset: 0 auto 0 0;
-    z-index: 100;
+    z-index: 1001;
     width: 260px;
     height: 100vh;
     overflow-y: auto;
-    background: var(--primary-color);
+    background: var(--primary-color, #123b2a);
     color: #ffffff;
     display: flex;
     flex-direction: column;
-    transition: transform var(--transition);
+    transform: translateX(0);
+    transition: transform 0.25s ease;
 }
 
 .sidebar-brand {
@@ -117,11 +170,6 @@
     background: rgba(255,255,255,.16);
 }
 
-.app-main {
-    min-height: 100vh;
-    margin-left: 260px;
-}
-
 .topbar {
     min-height: 82px;
     padding: 15px clamp(18px, 3vw, 38px);
@@ -195,8 +243,132 @@
 
 .sidebar-overlay {
     display: none;
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    background: rgba(15, 23, 42, 0.55);
+    opacity: 0;
+    pointer-events: none;
+}
+
+.sidebar-overlay.visible {
+    display: block;
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Desktop: sidebar stays visible */
+@media (min-width: 768px) {
+    .sidebar {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay {
+        display: none !important;
+    }
+
+    .menu-toggle {
+        display: none;
+    }
+}
+
+/* Mobile and tablet navigation drawer */
+@media (max-width: 767px) {
+    .sidebar {
+        z-index: 1001;
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.visible {
+        display: block;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
 }
 
 .mobile-bottom-nav {
     display: none;
+}
+
+
+/* =========================================
+   SMARTBIZ SHARED LAYOUT - FINAL OVERRIDE
+========================================= */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.app-layout {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+#sidebarMount {
+    flex: 0 0 260px;
+    width: 260px;
+    min-width: 260px;
+}
+
+.sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 260px;
+    height: 100vh;
+}
+
+.app-main {
+    flex: 1 1 auto;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    margin-left: 0;
+    padding: 24px;
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+
+@media (max-width: 1024px) {
+    .app-main {
+        padding: 20px;
+    }
+}
+
+@media (max-width: 767px) {
+    .app-layout {
+        display: block;
+    }
+
+    #sidebarMount {
+        width: 0;
+        min-width: 0;
+        height: 0;
+        flex: none;
+    }
+
+    .app-main {
+        width: 100%;
+        max-width: 100%;
+        margin-left: 0;
+        padding: 17px 15px 85px;
+    }
+}
+
+@media (max-width: 480px) {
+    .app-main {
+        padding: 14px 12px 85px;
+    }
 }

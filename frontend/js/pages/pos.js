@@ -30,17 +30,17 @@ document.addEventListener("DOMContentLoaded", async function () {
         (membership.business_status &&
             membership.business_status !== "active")
     ) {
-        showMessage("Your business membership is not active.", false);
+        showStartupMessage("Your business membership is not active.");
         return;
     }
 
     if (!["owner", "manager", "cashier"].includes(role)) {
-        showMessage("You do not have permission to process sales.", false);
+        showStartupMessage("You do not have permission to process sales.");
         return;
     }
 
     if (typeof window.renderSidebar === "function") {
-        window.renderSidebar();
+        window.renderSidebar(membership);
     }
 
     const elements = {
@@ -68,6 +68,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let products = [];
     let cart = [];
     let isSubmitting = false;
+    let amountPaidManuallyEdited = false;
 
     const currencyFormatter = new Intl.NumberFormat("en-RW", {
         maximumFractionDigits: 0
@@ -89,6 +90,29 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             return entities[character];
         });
+    }
+
+    function showStartupMessage(message) {
+        const messageBox = document.getElementById("posMessage");
+
+        if (messageBox) {
+            messageBox.textContent = message;
+            messageBox.hidden = false;
+        }
+    }
+
+    function syncAmountPaidWithTotal(force = false) {
+        const paymentMethod = elements.paymentMethod.value;
+        const totals = calculateTotals();
+
+        if (paymentMethod === "credit") {
+            elements.amountPaid.value = "0";
+            return;
+        }
+
+        if (force || !amountPaidManuallyEdited) {
+            elements.amountPaid.value = totals.total.toFixed(2);
+        }
     }
 
     function showMessage(message, success = false) {
@@ -281,8 +305,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         elements.taxValue.textContent = formatMoney(totals.tax);
         elements.totalValue.textContent = formatMoney(totals.total);
 
+        syncAmountPaidWithTotal();
+
         if (elements.paymentMethod.value === "credit") {
-            elements.amountPaid.value = "0";
             elements.amountPaidField.hidden = true;
             elements.paymentHint.textContent =
                 "This sale will be recorded as unpaid. Select a customer.";
@@ -493,6 +518,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             elements.amountPaid.value = "0";
             elements.customerSelect.value = "";
             elements.paymentMethod.value = "cash";
+            amountPaidManuallyEdited = false;
 
             renderCart();
             await loadProducts(elements.productSearch.value);
@@ -577,14 +603,32 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     elements.discountInput.addEventListener("input", updateTotals);
     elements.taxInput.addEventListener("input", updateTotals);
-    elements.paymentMethod.addEventListener("change", updateTotals);
+    elements.paymentMethod.addEventListener("change", function () {
+        const isCredit = elements.paymentMethod.value === "credit";
+
+        elements.amountPaidField.hidden = isCredit;
+
+        if (isCredit) {
+            elements.amountPaid.value = "0";
+            amountPaidManuallyEdited = false;
+            elements.paymentHint.textContent =
+                "Credit sales are recorded with no payment received.";
+        } else {
+            amountPaidManuallyEdited = false;
+            syncAmountPaidWithTotal(true);
+
+            elements.paymentHint.textContent =
+                "The full sale amount is selected by default. You can enter a partial payment.";
+        }
+    });
 
     elements.amountPaid.addEventListener("input", function () {
-        clearMessage();
+        amountPaidManuallyEdited = true;
     });
 
     elements.clearCartBtn.addEventListener("click", function () {
         cart = [];
+        amountPaidManuallyEdited = false;
         renderCart();
         clearMessage();
     });

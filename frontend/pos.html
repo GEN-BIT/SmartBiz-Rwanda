@@ -11,9 +11,12 @@
     <link rel="stylesheet" href="css/pos.css">
 </head>
 <body>
-    <div id="sidebarMount"></div>
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
 
-    <main class="main-content pos-main">
+    <div class="app-layout">
+        <div id="sidebarMount"></div>
+
+        <main class="app-main main-content pos-main">
         <header class="pos-header">
             <div>
                 <p class="page-eyebrow">SALES MANAGEMENT</p>
@@ -149,7 +152,8 @@
                 </div>
             </aside>
         </section>
-    </main>
+        </main>
+    </div>
 
     <script src="js/config/api.js"></script>
     <script src="js/services/auth.service.js"></script>

@@ -104,13 +104,14 @@ document.addEventListener("DOMContentLoaded", async function () {
 
         const date = new Date(value);
 
-        if (Number.isNaN(date.getTime())) {
-            return "—";
-        }
+        if (Number.isNaN(date.getTime())) return "—";
 
-        return date.toLocaleString("en-RW", {
-            dateStyle: "medium",
-            timeStyle: "short"
+        return date.toLocaleString("en-GB", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit"
         });
     }
 

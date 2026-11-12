@@ -1,0 +1,183 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Profile | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/responsive.css">
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app-layout">
+        <div id="sidebarMount"></div>
+
+        <main class="app-main">
+
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button type="button" class="menu-toggle"
+                            id="menuToggle" aria-label="Open navigation">
+                        ☰
+                    </button>
+                    <div>
+                        <h1>My Profile</h1>
+                        <p>Manage your account information.</p>
+                    </div>
+                </div>
+
+                <div class="user-information">
+                    <span id="userName">Account</span>
+                </div>
+            </header>
+
+            <section class="profile-page">
+
+                <div class="profile-heading">
+                    <div>
+                        <span class="profile-eyebrow">ACCOUNT MANAGEMENT</span>
+                        <h2>Profile & Account</h2>
+                        <p>View your account and business membership information.</p>
+                    </div>
+                </div>
+
+                <div class="profile-notice" id="profileNotice" role="status">
+                    Your account information is displayed from your current
+                    authenticated session where available.
+                </div>
+
+                <div class="profile-layout">
+
+                    <section class="profile-card profile-identity">
+                        <div class="profile-avatar" id="profileAvatar">S</div>
+
+                        <h3 id="profileDisplayName">SmartBiz Account</h3>
+                        <p id="profileRole">Loading membership...</p>
+
+                        <div class="profile-divider"></div>
+
+                        <div class="profile-detail">
+                            <span>Membership status</span>
+                            <strong id="membershipStatus">—</strong>
+                        </div>
+
+                        <div class="profile-detail">
+                            <span>Business status</span>
+                            <strong id="businessStatus">—</strong>
+                        </div>
+                    </section>
+
+                    <div class="profile-main-column">
+
+                        <section class="profile-card">
+                            <div class="profile-card-heading">
+                                <div>
+                                    <h3>Account Information</h3>
+                                    <p>Your personal account details.</p>
+                                </div>
+                                <span class="profile-tag">Read only</span>
+                            </div>
+
+                            <div class="profile-information-grid">
+                                <div class="profile-field">
+                                    <label>Account identity</label>
+                                    <div id="accountIdentity">Not available in session</div>
+                                </div>
+
+                                <div class="profile-field">
+                                    <label>Business role</label>
+                                    <div id="accountRole">—</div>
+                                </div>
+
+                                <div class="profile-field">
+                                    <label>Business ID</label>
+                                    <div id="accountBusinessId">—</div>
+                                </div>
+
+                                <div class="profile-field">
+                                    <label>Account type</label>
+                                    <div>Business workspace account</div>
+                                </div>
+                            </div>
+
+                            <p class="profile-help">
+                                Personal name, email and contact details will be
+                                displayed here when connected to the verified
+                                account profile endpoint.
+                            </p>
+                        </section>
+
+                        <section class="profile-card">
+                            <div class="profile-card-heading">
+                                <div>
+                                    <h3>Business Membership</h3>
+                                    <p>Your access to the current business workspace.</p>
+                                </div>
+                            </div>
+
+                            <div class="profile-information-grid">
+                                <div class="profile-field">
+                                    <label>Assigned role</label>
+                                    <div id="membershipRole">—</div>
+                                </div>
+
+                                <div class="profile-field">
+                                    <label>Membership status</label>
+                                    <div id="membershipStatusDetail">—</div>
+                                </div>
+
+                                <div class="profile-field">
+                                    <label>Business approval</label>
+                                    <div id="businessStatusDetail">—</div>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="profile-card">
+                            <div class="profile-card-heading">
+                                <div>
+                                    <h3>Account Security</h3>
+                                    <p>Manage your password and account protection.</p>
+                                </div>
+                            </div>
+
+                            <div class="security-row">
+                                <div>
+                                    <strong>Password</strong>
+                                    <p>Change your account password securely.</p>
+                                </div>
+                                <button type="button" class="profile-disabled-button"
+                                        disabled>
+                                    Change Password
+                                </button>
+                            </div>
+
+                            <p class="profile-help">
+                                Password changes will be enabled after the
+                                backend password-update contract is verified.
+                            </p>
+                        </section>
+
+                    </div>
+                </div>
+
+            </section>
+
+        </main>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/profile.js"></script>
+
+</body>
+</html>

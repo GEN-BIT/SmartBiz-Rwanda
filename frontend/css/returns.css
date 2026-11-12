@@ -453,3 +453,39 @@
         grid-template-columns: 1fr;
     }
 }
+
+/* Return status labels */
+
+.return-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: capitalize;
+    white-space: nowrap;
+}
+
+.return-status.pending {
+    background: #fff4df;
+    color: #a66a0a;
+}
+
+.return-status.completed {
+    background: #e7f6ed;
+    color: #16834a;
+}
+
+.return-status.rejected {
+    background: #feecec;
+    color: #b42318;
+}
+
+@media (max-width: 640px) {
+    .return-status {
+        font-size: 10px;
+        padding: 5px 8px;
+    }
+}

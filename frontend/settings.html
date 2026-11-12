@@ -1,0 +1,266 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Business Settings | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/settings.css">
+</head>
+<body>
+
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+    <div class="app-layout">
+        <div id="sidebarMount"></div>
+
+        <main class="app-main">
+
+            <header class="topbar">
+                <div class="settings-topbar-left">
+                    <button type="button" class="menu-toggle"
+                            id="menuToggle" aria-label="Open navigation">
+                        ☰
+                    </button>
+                    <div>
+                        <h1>Business Settings</h1>
+                        <p>Configure your business workspace.</p>
+                    </div>
+                </div>
+            </header>
+
+            <section class="settings-page">
+
+                <div class="settings-notice" id="settingsNotice" role="status">
+                    Settings are currently displayed as a configuration preview.
+                    Saving will be enabled after backend integration.
+                </div>
+
+                <div class="settings-layout">
+
+                    <aside class="settings-navigation">
+                        <button type="button" class="settings-nav-item active"
+                                data-settings-tab="business">
+                            <span>▦</span> Business Information
+                        </button>
+
+                        <button type="button" class="settings-nav-item"
+                                data-settings-tab="regional">
+                            <span>◎</span> Regional Preferences
+                        </button>
+
+                        <button type="button" class="settings-nav-item"
+                                data-settings-tab="tax">
+                            <span>▤</span> Tax Configuration
+                        </button>
+
+                        <button type="button" class="settings-nav-item"
+                                data-settings-tab="receipt">
+                            <span>▣</span> Receipts & Invoices
+                        </button>
+                    </aside>
+
+                    <div class="settings-content">
+
+                        <!-- Business information -->
+                        <section class="settings-panel active"
+                                 data-settings-panel="business">
+                            <div class="settings-panel-heading">
+                                <div>
+                                    <h3>Business Information</h3>
+                                    <p>Basic details used to identify your business.</p>
+                                </div>
+                            </div>
+
+                            <div class="settings-form-grid">
+                                <div class="settings-field">
+                                    <label for="businessName">Business name</label>
+                                    <input type="text" id="businessName"
+                                           placeholder="Business name" disabled>
+                                </div>
+
+                                <div class="settings-field">
+                                    <label for="businessEmail">Business email</label>
+                                    <input type="email" id="businessEmail"
+                                           placeholder="Business email" disabled>
+                                </div>
+
+                                <div class="settings-field">
+                                    <label for="businessPhone">Phone number</label>
+                                    <input type="tel" id="businessPhone"
+                                           placeholder="Business phone" disabled>
+                                </div>
+
+                                <div class="settings-field">
+                                    <label for="businessAddress">Business address</label>
+                                    <input type="text" id="businessAddress"
+                                           placeholder="Business address" disabled>
+                                </div>
+
+                                <div class="settings-field full-width">
+                                    <label for="businessDescription">Business description</label>
+                                    <textarea id="businessDescription"
+                                              rows="4"
+                                              placeholder="Describe your business"
+                                              disabled></textarea>
+                                </div>
+                            </div>
+
+                            <div class="settings-footer">
+                                <span>Business profile editing is awaiting API integration.</span>
+                                <button type="button" class="settings-save-button" disabled>
+                                    Save Changes
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- Regional preferences -->
+                        <section class="settings-panel"
+                                 data-settings-panel="regional">
+                            <div class="settings-panel-heading">
+                                <div>
+                                    <h3>Regional Preferences</h3>
+                                    <p>Set the regional formats used in your workspace.</p>
+                                </div>
+                            </div>
+
+                            <div class="settings-form-grid">
+                                <div class="settings-field">
+                                    <label for="currency">Business currency</label>
+                                    <select id="currency" disabled>
+                                        <option value="RWF">Rwandan Franc (RWF)</option>
+                                    </select>
+                                </div>
+
+                                <div class="settings-field">
+                                    <label for="timezone">Time zone</label>
+                                    <select id="timezone" disabled>
+                                        <option value="Africa/Kigali">
+                                            Africa/Kigali (Rwanda)
+                                        </option>
+                                    </select>
+                                </div>
+
+                                <div class="settings-field">
+                                    <label for="dateFormat">Date format</label>
+                                    <select id="dateFormat" disabled>
+                                        <option value="DD/MM/YYYY">DD/MM/YYYY</option>
+                                        <option value="MM/DD/YYYY">MM/DD/YYYY</option>
+                                        <option value="YYYY-MM-DD">YYYY-MM-DD</option>
+                                    </select>
+                                </div>
+
+                                <div class="settings-field">
+                                    <label for="language">Workspace language</label>
+                                    <select id="language" disabled>
+                                        <option value="en">English</option>
+                                        <option value="rw">Kinyarwanda</option>
+                                        <option value="fr">French</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="settings-footer">
+                                <span>Regional preferences are awaiting API integration.</span>
+                                <button type="button" class="settings-save-button" disabled>
+                                    Save Preferences
+                                </button>
+                            </div>
+                        </section>
+
+                        <!-- Tax configuration -->
+                        <section class="settings-panel"
+                                 data-settings-panel="tax">
+                            <div class="settings-panel-heading">
+                                <div>
+                                    <h3>Tax Configuration</h3>
+                                    <p>Review tax-related workspace configuration.</p>
+                                </div>
+                            </div>
+
+                            <div class="settings-information">
+                                <strong>Tax configuration is not connected yet.</strong>
+                                <p>
+                                    Tax registration details, applicable tax rates,
+                                    and tax calculation rules must be loaded from
+                                    verified business settings and backend rules.
+                                </p>
+                            </div>
+
+                            <div class="settings-form-grid">
+                                <div class="settings-field">
+                                    <label for="taxNumber">Tax identification number</label>
+                                    <input type="text" id="taxNumber"
+                                           placeholder="Not configured" disabled>
+                                </div>
+
+                                <div class="settings-field">
+                                    <label for="taxMode">Tax calculation mode</label>
+                                    <select id="taxMode" disabled>
+                                        <option value="">Not configured</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </section>
+
+                        <!-- Receipts and invoices -->
+                        <section class="settings-panel"
+                                 data-settings-panel="receipt">
+                            <div class="settings-panel-heading">
+                                <div>
+                                    <h3>Receipts & Invoices</h3>
+                                    <p>Configure how sales documents are presented.</p>
+                                </div>
+                            </div>
+
+                            <div class="settings-option">
+                                <div>
+                                    <strong>Business name on receipts</strong>
+                                    <p>Display the business name on printed receipts.</p>
+                                </div>
+                                <input type="checkbox" disabled checked>
+                            </div>
+
+                            <div class="settings-option">
+                                <div>
+                                    <strong>Business contact information</strong>
+                                    <p>Include business contact details on receipts.</p>
+                                </div>
+                                <input type="checkbox" disabled>
+                            </div>
+
+                            <div class="settings-option">
+                                <div>
+                                    <strong>Customer information on invoices</strong>
+                                    <p>Include customer details on generated invoices.</p>
+                                </div>
+                                <input type="checkbox" disabled checked>
+                            </div>
+
+                            <div class="settings-information">
+                                <strong>Document preferences are previews.</strong>
+                                <p>
+                                    These options are not saved or applied to actual
+                                    receipts and invoices until backend integration
+                                    is completed.
+                                </p>
+                            </div>
+                        </section>
+
+                    </div>
+                </div>
+
+            </section>
+        </main>
+    </div>
+
+    <script src="js/config/api.js"></script>
+    <script src="js/components/sidebar.js"></script>
+    <script src="js/pages/settings.js"></script>
+
+</body>
+</html>
