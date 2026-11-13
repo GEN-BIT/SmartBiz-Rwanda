@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let cart = [];
     let isSubmitting = false;
     let amountPaidManuallyEdited = false;
+    let productSearchRequestId = 0;
 
     const currencyFormatter = new Intl.NumberFormat("en-RW", {
         maximumFractionDigits: 0
@@ -386,6 +387,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     }
 
     async function loadProducts(search = "") {
+        const requestId = ++productSearchRequestId;
+
         elements.productGrid.innerHTML =
             '<div class="pos-empty">Loading products...</div>';
 
@@ -395,11 +398,21 @@ document.addEventListener("DOMContentLoaded", async function () {
                 search
             );
 
-            products = Array.isArray(response.data) ? response.data : [];
+            // Ignore outdated search responses.
+            if (requestId !== productSearchRequestId) return;
+
+            products = Array.isArray(response.data)
+                ? response.data
+                : [];
+
             renderProducts();
+
         } catch (error) {
+            if (requestId !== productSearchRequestId) return;
+
             elements.productGrid.innerHTML =
                 '<div class="pos-empty">Unable to load products.</div>';
+
             showMessage(error.message);
         }
     }
@@ -527,8 +540,6 @@ document.addEventListener("DOMContentLoaded", async function () {
                 `Sale completed. Invoice: ${sale.invoice_number}`,
                 true
             );
-
-            elements.amountPaid.value = sale.total_amount;
         } catch (error) {
             showMessage(error.message);
         } finally {
