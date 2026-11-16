@@ -461,3 +461,322 @@
         align-items: flex-start;
     }
 }
+
+
+/* =========================================
+   CASH REGISTER - RESPONSIVE LAYOUT FIX
+   Desktop, tablet and mobile
+========================================= */
+
+/* Prevent child elements from expanding the page */
+.app-main,
+.app-main *,
+.register-status-card,
+.register-summary-card,
+.content-card {
+    box-sizing: border-box;
+}
+
+.app-main > .page-header,
+.app-main > section {
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+}
+
+/* Desktop */
+@media (min-width: 1025px) {
+    .app-main {
+        width: calc(100% - 260px);
+        min-width: 0;
+        padding: 28px;
+    }
+
+    .register-summary-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 16px;
+    }
+
+    .register-content-grid {
+        grid-template-columns: minmax(0, 1.4fr) minmax(260px, 1fr);
+    }
+}
+
+/* Tablet: use the full screen and keep navigation as a drawer */
+@media (max-width: 1024px) {
+    .app-layout {
+        display: block;
+        width: 100%;
+    }
+
+    #sidebarMount {
+        width: 0;
+        min-width: 0;
+        height: 0;
+        flex: none;
+    }
+
+    .sidebar {
+        transform: translateX(-100%);
+    }
+
+    .sidebar.open {
+        transform: translateX(0);
+    }
+
+    .sidebar-overlay.visible {
+        display: block;
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .menu-toggle {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 44px;
+    }
+
+    .app-main {
+        width: 100%;
+        max-width: 100%;
+        min-width: 0;
+        margin: 0;
+        padding: 22px;
+    }
+
+    .register-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .register-content-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Smaller tablets and large phones */
+@media (max-width: 767px) {
+    .app-main {
+        padding: 18px 16px 85px;
+    }
+
+    .page-header {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: flex-start;
+        gap: 14px;
+        width: 100%;
+        margin-bottom: 20px;
+    }
+
+    .page-heading {
+        display: flex;
+        align-items: flex-start;
+        gap: 12px;
+        width: 100%;
+        min-width: 0;
+    }
+
+    .page-heading > div {
+        flex: 1;
+        min-width: 0;
+    }
+
+    .page-heading h1 {
+        font-size: clamp(22px, 5vw, 28px);
+        line-height: 1.25;
+        overflow-wrap: anywhere;
+    }
+
+    .page-subtitle {
+        font-size: 13px;
+        line-height: 1.5;
+    }
+
+    .header-actions {
+        width: 100%;
+    }
+
+    .register-status-card {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 18px;
+        padding: 18px;
+    }
+
+    .register-status-info {
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .register-status-info > div:last-child {
+        min-width: 0;
+    }
+
+    .register-status-info h2 {
+        font-size: 19px;
+        overflow-wrap: anywhere;
+    }
+
+    .status-description {
+        overflow-wrap: anywhere;
+    }
+
+    .register-status-actions {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        width: 100%;
+    }
+
+    .register-status-actions .btn {
+        width: 100%;
+        min-height: 44px;
+    }
+
+    .register-summary-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+    }
+
+    .register-summary-card {
+        min-width: 0;
+        padding: 14px;
+    }
+
+    .summary-card-top {
+        align-items: flex-start;
+        gap: 7px;
+        font-size: 12px;
+    }
+
+    .register-summary-card h3 {
+        margin-top: 12px;
+        font-size: clamp(16px, 4vw, 20px);
+        overflow-wrap: anywhere;
+    }
+
+    .register-summary-card p {
+        font-size: 11px;
+        line-height: 1.5;
+        overflow-wrap: anywhere;
+    }
+
+    .register-content-grid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 14px;
+    }
+
+    .content-card {
+        width: 100%;
+        min-width: 0;
+        padding: 17px;
+    }
+
+    .section-heading {
+        gap: 12px;
+    }
+
+    .session-details {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 17px 12px;
+    }
+
+    .session-detail {
+        min-width: 0;
+    }
+
+    .session-detail strong {
+        overflow-wrap: anywhere;
+    }
+
+    .history-filters {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        width: 100%;
+    }
+
+    .history-filters input {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .history-filters button {
+        grid-column: 1 / -1;
+        width: 100%;
+        min-height: 42px;
+    }
+
+    .table-responsive {
+        max-width: 100%;
+        overflow-x: auto;
+    }
+}
+
+/* Standard phones */
+@media (max-width: 480px) {
+    .app-main {
+        padding: 15px 13px 85px;
+    }
+
+    .register-status-card {
+        padding: 15px;
+        border-radius: 12px;
+    }
+
+    .status-icon {
+        width: 46px;
+        height: 46px;
+        flex-basis: 46px;
+    }
+
+    .register-summary-grid {
+        gap: 10px;
+    }
+
+    .register-summary-card {
+        padding: 12px;
+        border-radius: 12px;
+    }
+
+    .summary-icon {
+        width: 28px;
+        height: 28px;
+        flex: 0 0 28px;
+    }
+
+    .content-card {
+        padding: 15px;
+    }
+
+    .session-details {
+        gap: 15px 10px;
+    }
+
+    .register-modal {
+        width: 100%;
+        max-width: 440px;
+        max-height: calc(100dvh - 24px);
+        padding: 17px;
+    }
+}
+
+/* Very narrow phones */
+@media (max-width: 360px) {
+    .app-main {
+        padding-right: 10px;
+        padding-left: 10px;
+    }
+
+    .register-summary-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .session-details {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .register-status-info h2 {
+        font-size: 17px;
+    }
+}
