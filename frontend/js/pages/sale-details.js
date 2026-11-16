@@ -139,8 +139,12 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     function renderSaleDetails(result) {
         const sale = result?.sale;
-        const items = result?.items;
-        const payments = result?.payments;
+        const items = Array.isArray(result?.items)
+            ? result.items
+            : [];
+        const payments = Array.isArray(result?.payments)
+            ? result.payments
+            : [];
 
         if (!sale) {
             throw new Error("The sale details were not found in the server response.");
@@ -281,7 +285,11 @@ document.addEventListener("DOMContentLoaded", async function () {
     const businessStatus = String(membership.business_status || "").toLowerCase();
     const role = String(membership.role || "").toLowerCase();
 
-    if (!businessId || membershipStatus !== "active" || businessStatus !== "active") {
+    if (
+        !businessId ||
+        membershipStatus !== "active" ||
+        (businessStatus && businessStatus !== "active")
+    ) {
         showMessage("Your business membership is not active. Please contact the business owner.");
         return;
     }

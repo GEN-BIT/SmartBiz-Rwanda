@@ -74,6 +74,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     let currentPage = 1;
     const pageLimit = 10;
     let totalPages = 1;
+    let salesRequestId = 0;
 
     // Format Rwandan Francs.
     function formatMoney(value) {
@@ -244,6 +245,7 @@ document.addEventListener("DOMContentLoaded", async function () {
 
     // Load sales from the backend.
     async function loadSales() {
+        const requestId = ++salesRequestId;
 
         hideMessage();
 
@@ -269,6 +271,10 @@ document.addEventListener("DOMContentLoaded", async function () {
                 businessId,
                 filters
             );
+
+            if (requestId !== salesRequestId) {
+                return;
+            }
 
             const sales = Array.isArray(response.data)
                 ? response.data
@@ -304,6 +310,10 @@ document.addEventListener("DOMContentLoaded", async function () {
             nextPageBtn.disabled = currentPage >= totalPages;
 
         } catch (error) {
+
+            if (requestId !== salesRequestId) {
+                return;
+            }
 
             salesTableBody.innerHTML = `
                 <tr>

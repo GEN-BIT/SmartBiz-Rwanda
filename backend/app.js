@@ -1,3 +1,4 @@
+
 require("dotenv").config();
 
 const express = require("express");
@@ -11,6 +12,8 @@ const authRoutes = require("./src/routes/auth.routes");
 const businessRoutes = require("./src/routes/business.routes");
 const categoryRoutes = require("./src/routes/category.routes");
 const productRoutes = require("./src/routes/product.routes");
+const salesRoutes = require("./src/routes/sales.routes");
+const cashRegisterRoutes = require("./src/routes/cash-register.routes");
 
 const app = express();
 
@@ -60,6 +63,12 @@ app.use(`${appConfig.apiPrefix}/businesses`, categoryRoutes);
 
 // Product routes
 app.use(`${appConfig.apiPrefix}/businesses`, productRoutes);
+
+// Sales routes
+app.use(`${appConfig.apiPrefix}/businesses`, salesRoutes);
+
+// Cash register routes
+app.use(`${appConfig.apiPrefix}/businesses`, cashRegisterRoutes);
 
 // Handle unknown routes
 app.use((req, res) => {

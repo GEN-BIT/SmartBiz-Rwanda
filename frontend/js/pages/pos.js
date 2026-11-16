@@ -1,3 +1,4 @@
+
 /*
  * SmartBiz Rwanda - Point of Sale
  */
@@ -69,6 +70,8 @@ document.addEventListener("DOMContentLoaded", async function () {
     let cart = [];
     let isSubmitting = false;
     let amountPaidManuallyEdited = false;
+
+    // Tracks product searches to prevent outdated responses.
     let productSearchRequestId = 0;
 
     const currencyFormatter = new Intl.NumberFormat("en-RW", {
@@ -386,6 +389,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         renderCart();
     }
 
+    // Load products and ignore outdated search responses.
     async function loadProducts(search = "") {
         const requestId = ++productSearchRequestId;
 
@@ -398,15 +402,12 @@ document.addEventListener("DOMContentLoaded", async function () {
                 search
             );
 
-            // Ignore outdated search responses.
+            // Ignore this response if a newer search has started.
             if (requestId !== productSearchRequestId) return;
 
-            products = Array.isArray(response.data)
-                ? response.data
-                : [];
+            products = Array.isArray(response.data) ? response.data : [];
 
             renderProducts();
-
         } catch (error) {
             if (requestId !== productSearchRequestId) return;
 
@@ -420,6 +421,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     async function loadCustomers() {
         try {
             const response = await window.salesService.getCustomers(businessId);
+
             const customers = Array.isArray(response.data)
                 ? response.data
                 : [];
@@ -429,13 +431,18 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             customers.forEach(customer => {
                 const option = document.createElement("option");
+
                 option.value = customer.customer_id;
                 option.textContent = customer.customer_name;
+
                 elements.customerSelect.appendChild(option);
             });
         } catch (error) {
             // Customer loading should not prevent ordinary cash sales.
-            console.warn("Customer list could not be loaded:", error.message);
+            console.warn(
+                "Customer list could not be loaded:",
+                error.message
+            );
         }
     }
 
@@ -482,7 +489,9 @@ document.addEventListener("DOMContentLoaded", async function () {
             amountPaid < 0 ||
             Math.round(amountPaid * 100) !== amountPaid * 100
         ) {
-            showMessage("Enter a valid payment amount with up to 2 decimal places.");
+            showMessage(
+                "Enter a valid payment amount with up to 2 decimal places."
+            );
             return;
         }
 
@@ -492,7 +501,9 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
 
         if (amountPaid * 100 < totals.totalCents && !customerId) {
-            showMessage("Select a customer for an unpaid or partially paid sale.");
+            showMessage(
+                "Select a customer for an unpaid or partially paid sale."
+            );
             return;
         }
 
@@ -514,6 +525,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         };
 
         isSubmitting = true;
+
         elements.checkoutBtn.disabled = true;
         elements.checkoutBtn.textContent = "Processing...";
 
@@ -525,25 +537,34 @@ document.addEventListener("DOMContentLoaded", async function () {
 
             const sale = response.data;
 
+            // Reset the cart and payment fields after a successful sale.
             cart = [];
+
             elements.discountInput.value = "0";
             elements.taxInput.value = "0";
             elements.amountPaid.value = "0";
             elements.customerSelect.value = "";
             elements.paymentMethod.value = "cash";
+
             amountPaidManuallyEdited = false;
 
             renderCart();
+
             await loadProducts(elements.productSearch.value);
 
             showMessage(
                 `Sale completed. Invoice: ${sale.invoice_number}`,
                 true
             );
+
+            // Do not restore the previous sale amount here.
+            // The cleared cart should begin with an amount paid of zero.
+
         } catch (error) {
             showMessage(error.message);
         } finally {
             isSubmitting = false;
+
             elements.checkoutBtn.disabled = false;
             elements.checkoutBtn.textContent = "Complete sale";
         }
@@ -565,6 +586,7 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (!button) return;
 
         const productId = Number(button.dataset.productId);
+
         const item = cart.find(
             cartItem => Number(cartItem.product_id) === productId
         );
@@ -583,6 +605,7 @@ document.addEventListener("DOMContentLoaded", async function () {
             cart = cart.filter(
                 cartItem => Number(cartItem.product_id) !== productId
             );
+
             renderCart();
         }
     });
@@ -612,8 +635,11 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     });
 
+    // Update totals when discount or tax changes.
     elements.discountInput.addEventListener("input", updateTotals);
     elements.taxInput.addEventListener("input", updateTotals);
+
+    // Payment method changes.
     elements.paymentMethod.addEventListener("change", function () {
         const isCredit = elements.paymentMethod.value === "credit";
 
@@ -622,10 +648,12 @@ document.addEventListener("DOMContentLoaded", async function () {
         if (isCredit) {
             elements.amountPaid.value = "0";
             amountPaidManuallyEdited = false;
+
             elements.paymentHint.textContent =
                 "Credit sales are recorded with no payment received.";
         } else {
             amountPaidManuallyEdited = false;
+
             syncAmountPaidWithTotal(true);
 
             elements.paymentHint.textContent =
@@ -633,22 +661,29 @@ document.addEventListener("DOMContentLoaded", async function () {
         }
     });
 
+    // Track manual payment amount changes.
     elements.amountPaid.addEventListener("input", function () {
         amountPaidManuallyEdited = true;
     });
 
+    // Clear the cart.
     elements.clearCartBtn.addEventListener("click", function () {
         cart = [];
+
         amountPaidManuallyEdited = false;
+
         renderCart();
         clearMessage();
     });
 
+    // Complete sale.
     elements.checkoutBtn.addEventListener("click", completeSale);
 
+    // Initial page rendering.
     renderCart();
     updateTotals();
 
+    // Load products and customers.
     await Promise.all([
         loadProducts(),
         loadCustomers()

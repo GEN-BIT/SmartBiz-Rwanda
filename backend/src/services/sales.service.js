@@ -196,6 +196,27 @@ async function createSale(businessId, employeeId, data) {
 
         await connection.beginTransaction();
 
+        // Find and lock the authenticated employee's active cash register.
+        const [registers] = await connection.execute(
+            `SELECT register_id
+             FROM cash_registers
+             WHERE business_id = ?
+               AND employee_id = ?
+               AND status = 'open'
+             LIMIT 1
+             FOR UPDATE`,
+            [businessId, employeeId]
+        );
+
+        if (!registers.length) {
+            throw new AppError(
+                "Open a cash register before completing a sale.",
+                409
+            );
+        }
+
+        const registerId = registers[0].register_id;
+
         // Confirm the customer belongs to this business.
         if (customerId) {
             const [customers] = await connection.execute(
@@ -347,6 +368,7 @@ async function createSale(businessId, employeeId, data) {
                 business_id,
                 customer_id,
                 employee_id,
+                register_id,
                 invoice_number,
                 subtotal,
                 discount_amount,
@@ -357,11 +379,12 @@ async function createSale(businessId, employeeId, data) {
                 payment_status,
                 sale_status,
                 notes
-            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'completed', ?)`,
+            ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'completed', ?)`,
             [
                 businessId,
                 customerId,
                 employeeId,
+                registerId,
                 invoiceNumber,
                 fromCents(subtotalCents),
                 fromCents(discountCents),
