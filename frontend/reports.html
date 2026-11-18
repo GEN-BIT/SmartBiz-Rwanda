@@ -3,15 +3,272 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#123B2A">
+
     <title>Reports | SmartBiz Rwanda</title>
+
+    <link rel="stylesheet" href="css/variables.css">
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/layout.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/reports.css">
+    <link rel="stylesheet" href="css/responsive.css">
 </head>
+
 <body>
+    <div class="app-layout">
+
+        <div id="sidebarMount"></div>
+
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <div class="app-main">
+
+            <header class="topbar">
+                <div class="topbar-left">
+                    <button
+                        type="button"
+                        class="menu-toggle"
+                        id="menuToggle"
+                        aria-label="Open navigation"
+                    >
+                        ☰
+                    </button>
+
+                    <div>
+                        <h1 class="page-heading">Reports</h1>
+                        <p class="page-subheading">
+                            Understand your business performance
+                        </p>
+                    </div>
+                </div>
+
+                <div class="topbar-right">
+                    <div class="user-info">
+                        <div class="user-avatar" id="userAvatar">U</div>
+
+                        <div class="user-details">
+                            <span id="userName">Loading...</span>
+                            <small id="userRole">Business Owner</small>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="reports-content">
+
+                <section class="reports-intro">
+                    <div>
+                        <h2>Business performance</h2>
+                        <p>
+                            Review sales, payments, expenses and inventory
+                            performance in one place.
+                        </p>
+                    </div>
+
+                    <div class="report-date-filter">
+                        <div class="date-field">
+                            <label for="dateFrom">From</label>
+                            <input type="date" id="dateFrom">
+                        </div>
+
+                        <div class="date-field">
+                            <label for="dateTo">To</label>
+                            <input type="date" id="dateTo">
+                        </div>
+
+                        <button type="button" id="applyFiltersBtn" class="btn btn-primary">
+                            Apply filters
+                        </button>
+                    </div>
+                </section>
+
+                <div class="report-message" id="reportMessage" role="status" hidden></div>
+
+                <section class="report-section">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Sales overview</h2>
+                            <p>Sales performance for the selected period</p>
+                        </div>
+                    </div>
+
+                    <div class="report-kpi-grid">
+
+                        <article class="report-kpi-card">
+                            <div class="kpi-icon">↗</div>
+                            <div class="kpi-label">Total sales</div>
+                            <div class="kpi-value" id="totalSales">—</div>
+                            <div class="kpi-note">Completed transactions</div>
+                        </article>
+
+                        <article class="report-kpi-card">
+                            <div class="kpi-icon">RWF</div>
+                            <div class="kpi-label">Total revenue</div>
+                            <div class="kpi-value" id="totalRevenue">—</div>
+                            <div class="kpi-note">Value of completed sales</div>
+                        </article>
+
+                        <article class="report-kpi-card">
+                            <div class="kpi-icon">✓</div>
+                            <div class="kpi-label">Amount collected</div>
+                            <div class="kpi-value" id="amountCollected">—</div>
+                            <div class="kpi-note">Recorded against completed sales</div>
+                        </article>
+
+                        <article class="report-kpi-card">
+                            <div class="kpi-icon">◷</div>
+                            <div class="kpi-label">Outstanding balance</div>
+                            <div class="kpi-value" id="outstandingBalance">—</div>
+                            <div class="kpi-note">Remaining customer balances</div>
+                        </article>
+
+                        <article class="report-kpi-card">
+                            <div class="kpi-icon">Ø</div>
+                            <div class="kpi-label">Average sale</div>
+                            <div class="kpi-value" id="averageSale">—</div>
+                            <div class="kpi-note">Average completed sale value</div>
+                        </article>
+
+                        <article class="report-kpi-card expense-kpi">
+                            <div class="kpi-icon">−</div>
+                            <div class="kpi-label">Total expenses</div>
+                            <div class="kpi-value" id="totalExpenses">—</div>
+                            <div class="kpi-note">Expenses recorded in this period</div>
+                        </article>
+
+                    </div>
+                </section>
+
+                <section class="report-section">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Sales trend</h2>
+                            <p>Daily revenue during the selected period</p>
+                        </div>
+                    </div>
+
+                    <div class="report-panel">
+                        <div class="chart-summary">
+                            <span>Total revenue</span>
+                            <strong id="trendRevenue">RWF 0</strong>
+                        </div>
+
+                        <div class="sales-chart" id="salesTrendChart">
+                            <div class="empty-state">Loading sales trend...</div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="report-two-column">
+
+                    <div class="report-section">
+                        <div class="section-heading">
+                            <div>
+                                <h2>Payment methods</h2>
+                                <p>Recorded sales payments by method</p>
+                            </div>
+                        </div>
+
+                        <div class="report-panel">
+                            <div id="paymentBreakdown" class="breakdown-list">
+                                <div class="empty-state">Loading payments...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="report-section">
+                        <div class="section-heading">
+                            <div>
+                                <h2>Expenses by category</h2>
+                                <p>Expense distribution for the selected period</p>
+                            </div>
+                        </div>
+
+                        <div class="report-panel">
+                            <div id="expenseBreakdown" class="breakdown-list">
+                                <div class="empty-state">Loading expenses...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </section>
+
+                <section class="report-section">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Top-selling products</h2>
+                            <p>Products ranked by quantity sold</p>
+                        </div>
+                    </div>
+
+                    <div class="report-panel table-panel">
+                        <div class="report-table-wrapper">
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>Product</th>
+                                        <th>SKU</th>
+                                        <th>Quantity sold</th>
+                                        <th>Total revenue</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody id="topProductsBody">
+                                    <tr>
+                                        <td colspan="4" class="table-empty">
+                                            Loading products...
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="report-section">
+                    <div class="section-heading">
+                        <div>
+                            <h2>Inventory summary</h2>
+                            <p>Current stock position across active products</p>
+                        </div>
+                    </div>
+
+                    <div class="inventory-summary-grid">
+
+                        <article class="inventory-summary-card">
+                            <span>Total products</span>
+                            <strong id="inventoryTotal">—</strong>
+                        </article>
+
+                        <article class="inventory-summary-card">
+                            <span>Products in stock</span>
+                            <strong id="inventoryInStock">—</strong>
+                        </article>
+
+                        <article class="inventory-summary-card warning">
+                            <span>Low stock</span>
+                            <strong id="inventoryLowStock">—</strong>
+                        </article>
+
+                        <article class="inventory-summary-card danger">
+                            <span>Out of stock</span>
+                            <strong id="inventoryOutOfStock">—</strong>
+                        </article>
+
+                    </div>
+                </section>
+
+            </main>
+        </div>
+    </div>
+
+    <div class="mobile-bottom-nav" id="mobileBottomNav"></div>
 
     <script src="js/config/api.js"></script>
     <script src="js/services/auth.service.js"></script>
-    <script src="js/services/expense.service.js"></script>
+    <script src="js/components/sidebar.js"></script>
     <script src="js/services/report.service.js"></script>
     <script src="js/pages/reports.js"></script>
-
 </body>
 </html>

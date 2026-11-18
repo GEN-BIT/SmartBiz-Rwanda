@@ -14,6 +14,8 @@ const categoryRoutes = require("./src/routes/category.routes");
 const productRoutes = require("./src/routes/product.routes");
 const salesRoutes = require("./src/routes/sales.routes");
 const cashRegisterRoutes = require("./src/routes/cash-register.routes");
+const expenseRoutes = require("./src/routes/expense.routes");
+const reportRoutes = require("./src/routes/report.routes");
 
 const app = express();
 
@@ -69,6 +71,12 @@ app.use(`${appConfig.apiPrefix}/businesses`, salesRoutes);
 
 // Cash register routes
 app.use(`${appConfig.apiPrefix}/businesses`, cashRegisterRoutes);
+
+// Expense routes
+app.use(`${appConfig.apiPrefix}/businesses`, expenseRoutes);
+
+// Reports routes
+app.use(`${appConfig.apiPrefix}/businesses`, reportRoutes);
 
 // Handle unknown routes
 app.use((req, res) => {
