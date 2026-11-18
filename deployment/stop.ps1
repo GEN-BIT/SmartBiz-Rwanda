@@ -109,5 +109,9 @@ else {
     Write-Host "No portable MySQL PID file found; MySQL was not touched."
 }
 
-Write-Host ""
+Write-Host "`n========================================"
+Write-Host "        WE HOPE TO SEE YOU SOON"
+Write-Host "           MASTON A-K-A VAREK"
+Write-Host "                   😎      "
+Write-Host "========================================"
 Write-Host "SmartBiz shutdown routine finished." -ForegroundColor Green

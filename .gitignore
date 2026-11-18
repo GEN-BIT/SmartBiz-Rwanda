@@ -1,24 +1,36 @@
 # Dependencies
 node_modules/
-backend/node_modules/
-portable/
+**/node_modules/
+
+# Portable runtime and local installations
+/portable/
 
 # Environment variables and secrets
 .env
 .env.*
-backend/.env
-backend/.env.*
+**/.env
+**/.env.*
 !backend/.env.example
+
+# Database backups: never publish local backup contents
+/database/backups/*
+!/database/backups/.gitkeep
 
 # Logs
 *.log
 
-# Build files
-dist/
-build/
-# Local database backups
-/database/backups/*.sql
+# Generated build output
+/dist/
+/build/
 
-# Old deployment script copies
+# Temporary and editor files
+*.tmp
+*.temp
+*.swp
+*.bak
+.DS_Store
+Thumbs.db
+# Local recovery copies
+/.gitignore.backup-*
 /deployment/*.backup-*
-/deployment/*.previous-*
+/deployment/*.previous-fix

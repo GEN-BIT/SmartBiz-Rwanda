@@ -188,7 +188,10 @@ if (!(Test-Path $frontendScript)) {
 }
 
 Write-Host "`n========================================"
-Write-Host "       SMARTBIZ PORTABLE STARTUP"
+Write-Host "         SMARTBIZ-RWANDA STARTUP"
+Write-Host "             MASTON DESIGN"
+Write-Host '              $20 MILLION'
+Write-Host "                =>COST"
 Write-Host "========================================"
 
 # ------------------------------------------------------------
