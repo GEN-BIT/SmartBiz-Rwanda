@@ -1,4 +1,4 @@
-# Dependencies
+﻿# Dependencies
 node_modules/
 **/node_modules/
 
@@ -37,6 +37,6 @@ Thumbs.db
 /deployment/*.previous-fix
 
 # Portable launcher scripts and readme
-START-SMARTBIZ.bat
-STOP-SMARTBIZ.bat
-README-PORTABLE.txt
+.START-SMARTBIZ.bat
+.STOP-SMARTBIZ.bat
+.README-PORTABLE.txt
