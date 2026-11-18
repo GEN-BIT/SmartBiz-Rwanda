@@ -54,7 +54,7 @@ foreach ($name in @("frontend", "backend")) {
     }
 }
 
-# Gracefully shut down only the verified portable MySQL instance.
+# Gracefully shut down only the verified MySQL Server instance.
 $mysqlPidFile = Join-Path $run "mysql.pid"
 
 if (Test-Path $mysqlPidFile) {
@@ -68,14 +68,14 @@ if (Test-Path $mysqlPidFile) {
     $mysqlProcess = Get-ProcessById $mysqlPid
 
     if (!$mysqlProcess) {
-        Write-Host "Recorded portable MySQL process is already stopped."
+        Write-Host "Recorded MySQL Server process is already stopped."
         Remove-Item $mysqlPidFile -Force
     }
     elseif (
         $mysqlProcess.ExecutablePath -ieq $mysqlExe -and
         $mysqlProcess.CommandLine -like "*$config*"
     ) {
-        Write-Host "Requesting graceful shutdown of verified portable MySQL..."
+        Write-Host "Requesting graceful shutdown of verified MySQL Server ..."
 
         $helper = Join-Path $PSScriptRoot "shutdown-mysql.js"
         & $node $helper
@@ -95,18 +95,18 @@ if (Test-Path $mysqlPidFile) {
 
         if ($stopped) {
             Remove-Item $mysqlPidFile -Force
-            Write-Host "Portable MySQL stopped."
+            Write-Host "MySQL Server stopped."
         }
         else {
             throw "MySQL has not exited yet. PID file retained; do not unplug the drive."
         }
     }
     else {
-        Write-Warning "MySQL PID does not match this portable installation. MySQL was NOT stopped."
+        Write-Warning "MySQL PID does not match this portable installation. MySQL Server was NOT stopped."
     }
 }
 else {
-    Write-Host "No portable MySQL PID file found; MySQL was not touched."
+    Write-Host "No MySQL Server PID file found; MySQL was not touched."
 }
 
 Write-Host "`n========================================"

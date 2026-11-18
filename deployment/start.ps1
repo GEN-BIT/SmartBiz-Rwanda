@@ -226,7 +226,7 @@ Set-Content -Path $config -Value $configText -Encoding ASCII
 # MYSQL START / REUSE
 # ------------------------------------------------------------
 
-Write-Host "`n[1/3] Checking portable MySQL..." -ForegroundColor Cyan
+Write-Host "`n[1/3] Checking MySQL Server..." -ForegroundColor Cyan
 
 $mysqlListener = Get-PortOwnerProcess 3307
 
@@ -238,7 +238,7 @@ if ($mysqlListener) {
 
     $mysqlPid = Get-MySQLShutdownPid $mysqlListener
 
-    Write-Host "Portable MySQL already running. Reusing it." -ForegroundColor Green
+    Write-Host "MySQL Server already running. Reusing it." -ForegroundColor Green
 }
 elseif (Test-TcpPort 3307) {
 
@@ -246,7 +246,7 @@ elseif (Test-TcpPort 3307) {
 }
 else {
 
-    Write-Host "Starting portable MySQL..."
+    Write-Host "Starting MySQL Server..."
 
     $mysqlProcess = Start-Process -FilePath $mysqlExe `
         -ArgumentList "--defaults-file=`"$config`"" `
@@ -258,7 +258,7 @@ else {
     $mysqlPid = $mysqlProcess.Id
 
     if (!(Wait-Port 3307 90)) {
-        throw "Portable MySQL did not become ready. Check portable\logs\mysql-error.log."
+        throw "MySQL Server did not become ready. Check portable\logs\mysql-error.log."
     }
 
     $mysqlListener = Get-PortOwnerProcess 3307
@@ -269,7 +269,7 @@ else {
 
     $mysqlPid = Get-MySQLShutdownPid $mysqlListener
 
-    Write-Host "Portable MySQL started." -ForegroundColor Green
+    Write-Host "MySQL Server started." -ForegroundColor Green
 }
 
 Save-ServicePid "mysql" ([int]$mysqlPid)
