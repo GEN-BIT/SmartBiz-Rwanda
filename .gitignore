@@ -1,6 +1,7 @@
 # Dependencies
 node_modules/
 backend/node_modules/
+portable/
 
 # Environment variables and secrets
 .env
@@ -15,3 +16,9 @@ backend/.env.*
 # Build files
 dist/
 build/
+# Local database backups
+/database/backups/*.sql
+
+# Old deployment script copies
+/deployment/*.backup-*
+/deployment/*.previous-*
