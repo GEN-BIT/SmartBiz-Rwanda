@@ -32,5 +32,11 @@ node_modules/
 Thumbs.db
 # Local recovery copies
 /.gitignore.backup-*
+/.gitignore.backup-20261118
 /deployment/*.backup-*
 /deployment/*.previous-fix
+
+# Portable launcher scripts and readme
+START-SMARTBIZ.bat
+STOP-SMARTBIZ.bat
+README-PORTABLE.txt
