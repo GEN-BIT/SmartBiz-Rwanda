@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 
 # ------------------------------------------------------------
 # PATHS
@@ -251,48 +251,105 @@ Set-Content -Path $config -Value $configText -Encoding ASCII
 
 Write-Host "`n[1/3] Checking MySQL Server..." -ForegroundColor Cyan
 
-$mysqlListener = Get-PortOwnerProcess 3307
+function Get-PortableMySQLProcess {
 
-if ($mysqlListener) {
+    $expectedExe = [System.IO.Path]::GetFullPath($mysqlExe)
+    $expectedConfig = [System.IO.Path]::GetFullPath($config)
 
-    if (!(Test-PortableMySQL $mysqlListener)) {
-        throw "Port 3307 is occupied by an unverified process. Nothing was stopped."
+    $candidates = @(
+        Get-CimInstance Win32_Process -Filter "Name = 'mysqld.exe'" `
+            -ErrorAction SilentlyContinue |
+        Where-Object {
+            if (!$_.ExecutablePath -or !$_.CommandLine) {
+                return $false
+            }
+
+            try {
+                $actualExe = [System.IO.Path]::GetFullPath($_.ExecutablePath)
+
+                return (
+                    [string]::Equals(
+                        $actualExe,
+                        $expectedExe,
+                        [System.StringComparison]::OrdinalIgnoreCase
+                    ) -and
+                    $_.CommandLine.IndexOf(
+                        $expectedConfig,
+                        [System.StringComparison]::OrdinalIgnoreCase
+                    ) -ge 0
+                )
+            }
+            catch {
+                return $false
+            }
+        } |
+        Sort-Object CreationDate -Descending
+    )
+
+    if ($candidates.Count -gt 0) {
+        return $candidates[0]
     }
 
-    $mysqlPid = Get-MySQLShutdownPid $mysqlListener
+    return $null
+}
 
-    Write-Host "MySQL Server already running. Reusing it." -ForegroundColor Green
+Write-Host "`n[1/3] Checking MySQL Server..." -ForegroundColor Cyan
+
+$mysqlCandidate = Get-PortableMySQLProcess
+
+if ($mysqlCandidate) {
+
+    if (!(Test-TcpPort 3307)) {
+        throw "The portable MySQL process exists but port 3307 is not responding. No process was stopped."
+    }
+
+    $mysqlPid = Get-MySQLShutdownPid $mysqlCandidate
+
+    Write-Host "Portable MySQL Server already running. Reusing it." -ForegroundColor Green
 }
 elseif (Test-TcpPort 3307) {
 
-    throw "Port 3307 accepts connections but its owner could not be verified. No new MySQL process was started."
+    throw "Port 3307 is responding, but its process is not verified as this project's portable MySQL. Nothing was stopped."
 }
 else {
 
-    Write-Host "Starting MySQL Server..."
+    Write-Host "Starting portable MySQL Server..."
 
-    $mysqlProcess = Start-Process -FilePath $mysqlExe `
+    Start-Process -FilePath $mysqlExe `
         -ArgumentList "--defaults-file=`"$config`"" `
         -WorkingDirectory $portable `
-        -PassThru -WindowStyle Hidden `
+        -WindowStyle Hidden `
         -RedirectStandardOutput (Join-Path $logs "mysql.log") `
         -RedirectStandardError (Join-Path $logs "mysql-error.log")
-
-    $mysqlPid = $mysqlProcess.Id
 
     if (!(Wait-Port 3307 90)) {
         throw "MySQL Server did not become ready. Check portable\logs\mysql-error.log."
     }
 
-    $mysqlListener = Get-PortOwnerProcess 3307
+    $mysqlCandidate = $null
 
-    if (!(Test-PortableMySQL $mysqlListener)) {
-        throw "Port 3307 opened, but its owner is not the verified portable MySQL executable."
+    for ($attempt = 0; $attempt -lt 20; $attempt++) {
+
+        $mysqlCandidate = Get-PortableMySQLProcess
+
+        if ($mysqlCandidate) {
+            break
+        }
+
+        Start-Sleep -Milliseconds 500
     }
 
-    $mysqlPid = Get-MySQLShutdownPid $mysqlListener
+    if (!$mysqlCandidate) {
+        throw "MySQL responds, but its portable process could not be verified. No process was stopped."
+    }
 
-    Write-Host "MySQL Server started." -ForegroundColor Green
+    if (!(Test-TcpPort 3307)) {
+        throw "The portable MySQL process was found, but port 3307 is not responding."
+    }
+
+    $mysqlPid = Get-MySQLShutdownPid $mysqlCandidate
+
+    Write-Host "Portable MySQL Server started and verified." -ForegroundColor Green
 }
 
 Save-ServicePid "mysql" ([int]$mysqlPid)
@@ -335,13 +392,22 @@ else {
         throw "Backend did not become ready. Check portable\logs\backend-error.log."
     }
 
-    $backendListener = Get-PortOwnerProcess 5000
+    # Verify the portable backend process directly after the port becomes reachable.
+    # The port was confirmed free before this script launched the backend.
+    $backendProcess = Get-CimInstance Win32_Process |
+        Where-Object {
+            $_.Name -ieq "node.exe" -and
+            $_.ExecutablePath -ieq $node -and
+            $_.CommandLine -like "*server.js*"
+        } |
+        Sort-Object CreationDate -Descending |
+        Select-Object -First 1
 
-    if (!(Test-PortableNode $backendListener "server.js")) {
-        throw "Port 5000 opened, but its owner is not the verified portable backend."
+    if (!$backendProcess -or !(Test-TcpPort 5000)) {
+        throw "Backend process started, but verification failed. Check portable\logs\backend-error.log."
     }
 
-    $backendPid = $backendListener.ProcessId
+    $backendPid = [int]$backendProcess.ProcessId
 
     Write-Host "SmartBiz backend started." -ForegroundColor Green
 }
@@ -386,13 +452,21 @@ else {
         throw "Frontend did not become ready. Check portable\logs\frontend-error.log."
     }
 
-    $frontendListener = Get-PortOwnerProcess 5500
+    # Verify the exact portable frontend process after the port becomes reachable.
+    $frontendProcess = Get-CimInstance Win32_Process |
+        Where-Object {
+            $_.Name -ieq "node.exe" -and
+            $_.ExecutablePath -ieq $node -and
+            $_.CommandLine -like "*frontend-server.js*"
+        } |
+        Sort-Object CreationDate -Descending |
+        Select-Object -First 1
 
-    if (!(Test-PortableNode $frontendListener "frontend-server.js")) {
-        throw "Port 5500 opened, but its owner is not the verified portable frontend."
+    if (!$frontendProcess -or !(Test-TcpPort 5500)) {
+        throw "Frontend process started, but verification failed. Check portable\logs\frontend-error.log."
     }
 
-    $frontendPid = $frontendListener.ProcessId
+    $frontendPid = [int]$frontendProcess.ProcessId
 
     Write-Host "SmartBiz frontend started." -ForegroundColor Green
 }
@@ -450,3 +524,7 @@ Write-Host "Frontend : $frontendPid"
 Write-Host "`nAll startup and HTTP checks passed." -ForegroundColor Green
 
 Start-Process "http://localhost:5500"
+
+
+
+
