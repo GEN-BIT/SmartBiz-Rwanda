@@ -1,3 +1,4 @@
+
 const pool = require("../config/database");
 const AppError = require("../utils/AppError");
 
@@ -7,11 +8,25 @@ async function tenantCheck(req, res, next) {
             throw new AppError("Authentication required.", 401);
         }
 
-        // Business ID must come from the URL, not the request body.
-        const businessId = req.params.businessId;
+        // Get the business ID from the URL route parameter.
+        let businessId = req.params?.businessId;
 
-        if (!businessId) {
-            throw new AppError("Business ID is required in the URL.", 400);
+        // Fallback for requests passing through mounted routers.
+        if (!businessId && req.originalUrl) {
+            const match = req.originalUrl.match(
+                /\/businesses\/(\d+)(?:\/|$)/
+            );
+
+            if (match) {
+                businessId = match[1];
+            }
+        }
+
+        if (!businessId || !/^\d+$/.test(String(businessId))) {
+            throw new AppError(
+                "A valid Business ID is required in the URL.",
+                400
+            );
         }
 
         const [rows] = await pool.execute(
@@ -47,10 +62,10 @@ async function tenantCheck(req, res, next) {
         req.businessId = String(rows[0].business_id);
         req.membership = rows[0];
 
-        next();
+        return next();
 
     } catch (error) {
-        next(error);
+        return next(error);
     }
 }
 

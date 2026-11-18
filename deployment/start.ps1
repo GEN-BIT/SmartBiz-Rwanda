@@ -23,59 +23,44 @@ New-Item -ItemType Directory -Force -Path $run, $logs | Out-Null
 
 function Get-PortOwnerProcess([int]$port) {
 
-    # First try actual listening sockets.
-    $connections = Get-NetTCPConnection `
-        -State Listen -LocalPort $port `
-        -ErrorAction SilentlyContinue
+    $netstatPath = Join-Path $env:SystemRoot "System32\netstat.exe"
+    $netstatLines = & $netstatPath -ano -p tcp 2>$null
 
-    # Fallback: include established connections.
-    # This handles the Windows reporting behavior observed on port 3307.
-    if (!$connections) {
-        $connections = Get-NetTCPConnection `
-            -LocalPort $port `
-            -ErrorAction SilentlyContinue
-    }
+    foreach ($line in $netstatLines) {
+        $parts = ([string]$line).Trim() -split '\s+'
 
-    foreach ($connection in $connections) {
+        if ($parts.Count -lt 5) { continue }
+        if ($parts[0] -ne "TCP") { continue }
+        if ($parts[3] -ne "LISTENING") { continue }
+        if ($parts[1] -notmatch ":$port$") { continue }
+        if ($parts[4] -notmatch '^\d+$') { continue }
 
-        $ownerId = [int]$connection.OwningProcess
+        $ownerId = [int]$parts[4]
 
-        if ($ownerId -le 0) {
-            continue
-        }
-
-        $process = Get-CimInstance Win32_Process `
+        $owner = Get-CimInstance Win32_Process `
             -Filter "ProcessId = $ownerId" `
             -ErrorAction SilentlyContinue
 
-        if ($process) {
-            return $process
+        if ($owner) {
+            return $owner
         }
     }
 
-    # Final fallback using netstat listening entries.
-    $netstatPath = Join-Path $env:SystemRoot "System32\netstat.exe"
-    $lines = & $netstatPath -ano -p tcp 2>$null
+    # Fallback to Windows TCP listener information.
+    $connections = @(
+        Get-NetTCPConnection -State Listen -LocalPort $port `
+            -ErrorAction SilentlyContinue
+    )
 
-    foreach ($line in $lines) {
+    foreach ($connection in $connections) {
+        $ownerId = [int]$connection.OwningProcess
 
-        $match = [regex]::Match(
-            [string]$line,
-            "^\s*TCP\s+\S+:$port\s+\S+\s+LISTENING\s+(\d+)\s*$",
-            [System.Text.RegularExpressions.RegexOptions]::IgnoreCase
-        )
+        $owner = Get-CimInstance Win32_Process `
+            -Filter "ProcessId = $ownerId" `
+            -ErrorAction SilentlyContinue
 
-        if ($match.Success) {
-
-            $ownerId = [int]$match.Groups[1].Value
-
-            $process = Get-CimInstance Win32_Process `
-                -Filter "ProcessId = $ownerId" `
-                -ErrorAction SilentlyContinue
-
-            if ($process) {
-                return $process
-            }
+        if ($owner) {
+            return $owner
         }
     }
 
@@ -136,11 +121,49 @@ function Test-PortableNode($process, [string]$scriptName) {
 
 function Test-PortableMySQL($process) {
 
-    if (!$process) { return $false }
+    if (!$process -or !$process.ProcessId) {
+        return $false
+    }
 
-    return ($process.ExecutablePath -ieq $mysqlExe)
+    # Verify the listener process and its parent chain.
+    # This supports portable MySQL launcher/child process arrangements.
+    $currentId = [int]$process.ProcessId
+    $expectedPath = [System.IO.Path]::GetFullPath($mysqlExe).TrimEnd("\")
+
+    for ($i = 0; $i -lt 4 -and $currentId -gt 0; $i++) {
+
+        $candidate = Get-CimInstance Win32_Process `
+            -Filter "ProcessId = $currentId" `
+            -ErrorAction SilentlyContinue
+
+        if (!$candidate) {
+            return $false
+        }
+
+        if ($candidate.ExecutablePath) {
+            try {
+                $actualPath = [System.IO.Path]::GetFullPath(
+                    $candidate.ExecutablePath
+                ).TrimEnd("\")
+
+                if ([string]::Equals(
+                    $actualPath,
+                    $expectedPath,
+                    [System.StringComparison]::OrdinalIgnoreCase
+                )) {
+                    return $true
+                }
+            }
+            catch {
+                return $false
+            }
+        }
+
+        $currentId = [int]$candidate.ParentProcessId
+    }
+
+    return $false
 }
-
 function Get-MySQLShutdownPid($listener) {
 
     if (!$listener) { return $null }

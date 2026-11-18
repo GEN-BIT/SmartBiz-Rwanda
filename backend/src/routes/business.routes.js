@@ -8,6 +8,7 @@ const customerRoutes = require("./customer.routes");
 const supplierRoutes = require("./supplier.routes");
 const purchaseRoutes = require("./purchase.routes");
 const expenseRoutes = require("./expense.routes");
+const employeeRoutes = require("./employee.routes");
 
 const authenticate = require("../middleware/authenticate");
 const tenantCheck = require("../middleware/tenant-check");
@@ -29,6 +30,7 @@ router.use(customerRoutes);
 router.use(supplierRoutes);
 router.use(purchaseRoutes);
 router.use(expenseRoutes);
+router.use(employeeRoutes);
 
 module.exports = router;
 

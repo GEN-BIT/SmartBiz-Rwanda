@@ -38,7 +38,8 @@ window.renderSidebar = function (membership) {
             ["♧", "Suppliers", "suppliers.html"],
             ["▧", "Purchases", "purchases.html"],
             ["＋", "Expenses", "expenses.html"],
-            ["▥", "Reports", "reports.html"]
+            ["▥", "Reports", "reports.html"],
+            ["♟", "Employees", "employees.html"]
         ],
 
         cashier: [

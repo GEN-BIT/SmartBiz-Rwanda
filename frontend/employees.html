@@ -190,6 +190,22 @@
                 </div>
 
                 <div class="form-field">
+                    <label for="employeePassword">Initial password</label>
+                    <input
+                        type="password"
+                        id="employeePassword"
+                        name="password"
+                        required
+                        minlength="12"
+                        autocomplete="new-password"
+                        placeholder="Enter a temporary password (12+ characters)"
+                    >
+                    <small>
+                        Give the employee their login credentials securely.
+                    </small>
+                </div>
+
+                <div class="form-field">
                     <label for="employeeRole">Business role</label>
                     <select id="employeeRole" name="role" required>
                         <option value="">Select employee role</option>
@@ -220,7 +236,9 @@
     </div>
 
     <script src="js/config/api.js"></script>
+    <script src="js/services/auth.service.js"></script>
     <script src="js/components/sidebar.js"></script>
+    <script src="js/services/employee.service.js"></script>
     <script src="js/pages/employees.js"></script>
 </body>
 </html>

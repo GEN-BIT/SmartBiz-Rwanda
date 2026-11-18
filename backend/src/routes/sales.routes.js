@@ -1,3 +1,4 @@
+
 /*
  * SmartBiz Rwanda - Sales Routes
  */
@@ -24,13 +25,11 @@ const salesRoles = [
     "cashier"
 ];
 
-// All routes require authentication and an active business membership.
-router.use(authenticate);
-router.use(tenantCheck);
-
 // POS product search.
 router.get(
     "/:businessId/pos/products",
+    authenticate,
+    tenantCheck,
     authorize(...readRoles),
     salesController.getPosProducts
 );
@@ -38,6 +37,8 @@ router.get(
 // Complete a sale.
 router.post(
     "/:businessId/sales",
+    authenticate,
+    tenantCheck,
     authorize(...salesRoles),
     salesController.createSale
 );
@@ -45,6 +46,8 @@ router.post(
 // Sales history.
 router.get(
     "/:businessId/sales",
+    authenticate,
+    tenantCheck,
     authorize(...readRoles),
     salesController.getSales
 );
@@ -52,6 +55,8 @@ router.get(
 // Individual sale details.
 router.get(
     "/:businessId/sales/:saleId",
+    authenticate,
+    tenantCheck,
     authorize(...readRoles),
     salesController.getSaleById
 );
